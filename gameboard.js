@@ -8,5 +8,15 @@ export function gameboard() {
     return sea;
   }
 
-  return { getSea };
+  function receiveAttack(x, y) {
+    if (sea[y][x] === 0) {
+      sea[y][x] = "-";
+    } else if (sea[y][x] === 1) {
+      sea[y][x] = "+";
+    } else {
+      console.log("position already attacked, try again");
+    }
+  }
+
+  return { getSea, receiveAttack };
 }
