@@ -2,6 +2,7 @@ import { Ship } from "./ship.js";
 
 export function gameboard() {
   let sea = Array.from({ length: 10 }, () =>
+    // eslint-disable-next-line prettier/prettier
     Array.from({ length: 10 }, () => 0)
   );
 
@@ -12,14 +13,14 @@ export function gameboard() {
     return sea;
   }
 
-  function receiveAttack(x, y) {
+  function receiveAttack(y, x) {
     let spotValue = sea[y][x];
     //for now this logic just checks the coordinates and changes the value accordingly or logs a statement that that position was already attacked
     if (spotValue === 0) {
       sea[y][x] = "-";
       //miss
     } else if (spotValue > 0) {
-      boats[spotValue].hit();
+      boats[spotValue - 1].hit();
       sea[y][x] = "+";
       //hit
     } else {
@@ -36,7 +37,6 @@ export function gameboard() {
       withinSeaRange(y + length, x) &&
       vacancyChecker(y, x, orientation, length)
     ) {
-      //fill locations
       addShip(y, x, orientation, length);
     } else if (
       orientation === "down" &&
@@ -44,7 +44,6 @@ export function gameboard() {
       withinSeaRange(y - length, x) &&
       vacancyChecker(y, x, orientation, length)
     ) {
-      //fill locations
       addShip(y, x, orientation, length);
     } else if (
       orientation === "right" &&
@@ -52,7 +51,6 @@ export function gameboard() {
       withinSeaRange(y, x + length) &&
       vacancyChecker(y, x, orientation, length)
     ) {
-      //fill locations
       addShip(y, x, orientation, length);
     } else if (
       orientation === "left" &&
@@ -60,7 +58,6 @@ export function gameboard() {
       withinSeaRange(y, x - length) &&
       vacancyChecker(y, x, orientation, length)
     ) {
-      //fill locations
       addShip(y, x, orientation, length);
     } else {
       console.log("location occupied");
