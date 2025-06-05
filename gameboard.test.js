@@ -95,3 +95,14 @@ test("receive attack", () => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 });
+
+test("Ships still remaining", () => {
+  let testBoard = new gameboard();
+  expect(testBoard.boats.filter((boat) => !boat.sunk).length).toBe(0);
+  testBoard.placeShip(0, 0, "right", 1);
+  expect(testBoard.boats.filter((boat) => !boat.sunk).length).toBe(1);
+  testBoard.placeShip(5, 5, "right", 1);
+  expect(testBoard.boats.filter((boat) => !boat.sunk).length).toBeGreaterThan(
+    0
+  );
+});
