@@ -4,6 +4,7 @@ export class Ship {
   }
   hit(newHits) {
     this.hits += newHits;
+    this.isSunk();
     return this;
   }
   isSunk() {
