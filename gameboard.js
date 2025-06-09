@@ -120,5 +120,9 @@ export function gameboard() {
     }
   }
 
-  return { getSea, receiveAttack, placeShip };
+  function boatsRemaining() {
+    return boats.filter((boat) => !boat.sunk).length;
+  }
+
+  return { getSea, receiveAttack, placeShip, boatsRemaining };
 }
