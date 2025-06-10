@@ -1,6 +1,8 @@
 import { Ship } from "./ship.js";
 
 export function gameboard() {
+  const _isGameboardInstance = true;
+
   let sea = Array.from({ length: 10 }, () =>
     // eslint-disable-next-line prettier/prettier
     Array.from({ length: 10 }, () => 0)
@@ -124,5 +126,11 @@ export function gameboard() {
     return boats.filter((boat) => !boat.sunk).length;
   }
 
-  return { getSea, receiveAttack, placeShip, boatsRemaining };
+  return {
+    getSea,
+    receiveAttack,
+    placeShip,
+    boatsRemaining,
+    _isGameboardInstance,
+  };
 }
