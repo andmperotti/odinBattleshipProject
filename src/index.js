@@ -69,8 +69,12 @@ playerInputs.appendChild(beginGameButton);
 startGameModal.appendChild(playerInputs);
 
 //display game start modal when there is not a current game running
-if (gameState) {
-  startGameModal.remove();
+function newGameShowHide() {
+  if (gameState) {
+    startGameModal.style.display = "hidden";
+  } else {
+    startGameModal.style.display = "block";
+  }
 }
 
 //listener on begin button that saves input values to variables and technically starts game
@@ -79,4 +83,6 @@ beginGameButton.addEventListener("click", () => {
   let playerTwoName = document.querySelector("#player-two-name").value;
   let playerTwoType = document.querySelector("#player-two-type").value;
   gameState = game(playerOneName, playerTwoName, playerTwoType);
+  newGameShowHide();
 });
+    
