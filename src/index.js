@@ -71,3 +71,15 @@ beginGameButton.id = "begin-game";
 playerInputs.appendChild(beginGameButton);
 
 startGameModal.appendChild(playerInputs);
+
+//display game start modal when there is not a current game running
+if (gameState) {
+  startGameModal.remove();
+}
+
+//listener on begin button that saves input values to variables and technically starts game
+beginGameButton.addEventListener("click", () => {
+  playerOneName = document.querySelector("#player-one-name").value;
+  playerTwoName = document.querySelector("#player-two-name").value;
+  playerTwoType = document.querySelector("#player-two-type").value;
+});
