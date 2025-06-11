@@ -1,13 +1,9 @@
-import Game from "./game";
+import game from "./game";
 import "./style.css";
 
 let body = document.querySelector("body");
 //create variables to keep track off a game is in progress, player1's name, player2's name, and player2's type
 let gameState = false;
-let playerOneName;
-let playerTwoName;
-let playerTwoType;
-//could save these into a Game instance....
 
 let startGameModal = document.createElement("div");
 body.appendChild(startGameModal);
@@ -79,7 +75,8 @@ if (gameState) {
 
 //listener on begin button that saves input values to variables and technically starts game
 beginGameButton.addEventListener("click", () => {
-  playerOneName = document.querySelector("#player-one-name").value;
-  playerTwoName = document.querySelector("#player-two-name").value;
-  playerTwoType = document.querySelector("#player-two-type").value;
+  let playerOneName = document.querySelector("#player-one-name").value;
+  let playerTwoName = document.querySelector("#player-two-name").value;
+  let playerTwoType = document.querySelector("#player-two-type").value;
+  gameState = game(playerOneName, playerTwoName, playerTwoType);
 });
