@@ -1,0 +1,21 @@
+#start-game-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#player-inputs {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#player-one-name, #player-two-name {
+    margin-left: 5px;
+}
+
+#player-two-type-fieldset{
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+}
