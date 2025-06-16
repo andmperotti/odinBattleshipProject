@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+import { describe, expect, test } from "@jest/globals";
 import { gameboard } from "./gameboard.js";
 import { ship } from "./ship.js";
 

@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+import { describe, expect, test } from "@jest/globals";
 import { gameboard } from "./gameboard.js";
 import { Player } from "./player.js";
 
