@@ -4,11 +4,6 @@ import { game } from "./game.js";
 describe("testing game factory function", () => {
   let testGame = game("drew", "comp", "Computer");
 
-  //   test("return something", () => {
-  //     expect(testGame).toBeTruthy();
-  //     console.log(testGame);
-  //   });
-
   test("first player created", () => {
     expect(testGame.players[0].name).toBe("drew");
   });
