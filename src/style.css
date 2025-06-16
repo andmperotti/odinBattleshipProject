@@ -1,10 +1,11 @@
 #start-game-modal {
+    display: inline-flex;
     flex-direction: column;
-    align-items: center;
-    position: absolute;
-    top: 10%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    background-color: red;
+    padding: 5px;
+    border-radius: 3%;
+    text-align: center;
+    height: fit-content;
 }
 
 #player-inputs {
@@ -20,5 +21,16 @@
 #player-two-type-fieldset{
     display: flex;
     align-items: baseline;
+}
+
+body{
+    max-height: 100vh;
+    max-width: 100vw;
+    display: flex;
     justify-content: center;
+}
+
+#switch-player-modal {
+    border: 1px solid gray;
+    height: fit-content;
 }
