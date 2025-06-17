@@ -95,6 +95,7 @@ playerInputs.addEventListener("submit", (e) => {
   //invoke function to either show or hide startGameModal, at this usage it will hide the modal as there is not a gameState
   newGameShowHide();
   clearInputFields();
+  switchPlayerModal();
 });
 
 //function to clear input fields of startGameModal
@@ -103,4 +104,29 @@ function clearInputFields() {
   playerTwoNameInput.value = "";
   playerTwoTypeRadioHuman.checked = false;
   playerTwoTypeRadioComputer.checked = false;
+}
+
+//switch player modal function
+function switchPlayerModal() {
+  let switchPlayerModal = document.createElement("div");
+  switchPlayerModal.style.display = "hidden";
+  switchPlayerModal.id = "switch-player-modal";
+  let contextSwitch = document.createElement("h2");
+  contextSwitch.textContent = `Please give the computer to ${attackingPlayer}`;
+  switchPlayerModal.appendChild(contextSwitch);
+  let switchPlayerButton = document.createElement("button");
+  switchPlayerButton.type = "button";
+  switchPlayerButton.textContent = "Switch";
+  switchPlayerModal.appendChild(switchPlayerButton);
+  body.appendChild(switchPlayerModal);
+  switchPlayerModal.style.display = "grid";
+
+  //event listener for switch player modal switch button, which initially will just hide the switch player modal, later will show the attacking players gameboard
+  switchPlayerButton.addEventListener("click", () => {
+    attackingPlayer = defendingPlayer;
+    defendingPlayer = attackingPlayer;
+    switchPlayerModal.remove();
+    console.log(attackingPlayer);
+    //and show gameboard of next player
+  });
 }
