@@ -120,13 +120,59 @@ function switchPlayerModal() {
   switchPlayerModal.appendChild(switchPlayerButton);
   body.appendChild(switchPlayerModal);
   switchPlayerModal.style.display = "grid";
+  let switchPlayerNotice = document.createElement("p");
+  switchPlayerNotice.textContent = `Please give the computer to player: ${attackingPlayer}`;
+  switchPlayerModal.appendChild(switchPlayerNotice);
 
   //event listener for switch player modal switch button, which initially will just hide the switch player modal, later will show the attacking players gameboard
   switchPlayerButton.addEventListener("click", () => {
     attackingPlayer = defendingPlayer;
     defendingPlayer = attackingPlayer;
     switchPlayerModal.remove();
-    console.log(attackingPlayer);
     //and show gameboard of next player
   });
 }
+
+//player1 position boats and of what size
+//confirm placement button
+//logic to check that 5 ships have been placed
+
+//if two human players: switch players
+
+//player 2 position boats and of what size
+//confirm placement button
+//logic to check that 5 ships have been placed
+
+//switch players
+//start battling until either player is out of ships....
+
+//player 1 attacks
+//selects position to attack, confirms
+//is told if they hit or missed, button clicked to close message
+
+//switch modal
+
+//player 2 is told if player 1 hit or missed and where they attacked, button click to close message
+//player 2 attacks :
+//selects position to attack, confirms
+//is told if they hit or missed, button clicks to close message
+
+//switch modal
+
+//player 1 is told if player 2 hit or missed and where they attacked, button click to close message
+//selects position to attack, confirms
+//is told if they hit or missed, button click to close message
+//switch...on and on
+
+//when a player has won
+//tell that user right after their attack has landed the last killing blow on the last ship, button to click to close
+//display final result modal, which shows both gameboards and displays timer of the game
+
+//if one human player
+//player 1 attacks computer ships, confirms attack
+//player 1 is told computer has hit or missed and where
+//repeat until either player1 or computer has lost
+//message that tells human who has won, click confirm
+//shows final result page with both gameboards
+
+//gameboard function, given a player it displays their attacking gameboard, adn their defending gameboard, both
