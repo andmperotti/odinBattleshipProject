@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+
+// eslint-disable-next-line no-unused-vars
 import { describe, expect, test, jest } from "@jest/globals";
 import { game } from "./game.js";
 
@@ -50,6 +52,7 @@ playerInputs.addEventListener("submit", (e) => {
   let playerOneName = playerOneNameInput.value;
   let playerTwoName = playerTwoNameInput.value;
   let playerTwoType = document.querySelector(
+    // eslint-disable-next-line prettier/prettier
     'input[name="player-type"]:checked'
   ).value;
   test("test variables values which will be used as arguments", () => {
@@ -73,6 +76,7 @@ test("creates a game instance with a players property that contains instances of
     },
   });
   expect(gameState.players[0].playerInstance.gameboard).toHaveProperty(
+    // eslint-disable-next-line prettier/prettier
     `_isGameboardInstance`
   );
 
@@ -83,6 +87,8 @@ test("creates a game instance with a players property that contains instances of
     },
   });
   expect(gameState.players[1].playerInstance.gameboard).toHaveProperty(
+    // eslint-disable-next-line prettier/prettier
     `_isGameboardInstance`
   );
 });
+
