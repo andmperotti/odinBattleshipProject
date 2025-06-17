@@ -30,7 +30,14 @@ body{
     justify-content: center;
 }
 
-#switch-player-modal {
+#switch-player-modal{
     border: 1px solid gray;
     height: fit-content;
+    padding: 15px;
+    text-align: center;
+    justify-items: center;
 }
+
+#switch-player-modal button {
+    width: 50%;
+}   
