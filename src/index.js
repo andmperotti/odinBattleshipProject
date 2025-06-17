@@ -1,9 +1,12 @@
-import game from "./game";
+import { game } from "./game.js";
 import "./style.css";
 
 let body = document.querySelector("body");
 //create variable to keep track of a game in progress
 let gameState = false;
+//variables to keep track of which player is attacking and defending
+let attackingPlayer;
+let defendingPlayer;
 
 //new game modal
 let startGameModal = document.createElement("div");
@@ -13,10 +16,10 @@ let startGameHeader = document.createElement("h1");
 startGameHeader.textContent = "Battleship";
 startGameModal.appendChild(startGameHeader);
 startGameModal.id = "start-game-modal";
-
+//create form element for inputs
 let playerInputs = document.createElement("form");
 playerInputs.id = "player-inputs";
-
+//create and add input elements to form
 let playerOneLabel = document.createElement("label");
 playerOneLabel.textContent = "Player 1 Name";
 let playerOneInput = document.createElement("input");
@@ -25,9 +28,7 @@ playerOneInput.placeholder = "ex: Drew";
 playerOneInput.id = "player-one-name";
 playerOneInput.autocomplete = "off";
 playerOneLabel.appendChild(playerOneInput);
-
 playerInputs.appendChild(playerOneLabel);
-
 let playerTwoNameLabel = document.createElement("label");
 playerTwoNameLabel.textContent = "Player 2 Name";
 let playerTwoNameInput = document.createElement("input");
@@ -42,7 +43,7 @@ let playerTwoTypeLegend = document.createElement("legend");
 playerTwoTypeLegend.textContent = "Player 2 type";
 playerTwoTypeFieldset.id = "player-two-type";
 playerTwoTypeFieldset.appendChild(playerTwoTypeLegend);
-//radio inputs
+//radio inputs with labels
 let playerTwoTypeRadioHuman = document.createElement("input");
 playerTwoTypeRadioHuman.type = "radio";
 playerTwoTypeRadioHuman.value = "human";
@@ -70,7 +71,7 @@ beginGameButton.type = "submit";
 beginGameButton.textContent = "Commence Battle";
 beginGameButton.id = "begin-game";
 playerInputs.appendChild(beginGameButton);
-
+//add button to start game modal
 startGameModal.appendChild(playerInputs);
 
 //display game start modal when there is not a current game running. At load there is no gameState therefore the startGameModal shows
@@ -89,7 +90,9 @@ playerInputs.addEventListener("submit", (e) => {
   let playerTwoName = document.querySelector("#player-two-name").value;
   let playerTwoType = document.querySelector("#player-two-type").value;
   gameState = game(playerOneName, playerTwoName, playerTwoType);
-  //invoke function to either show or hide startGameModal, at this usage it will hide the modal as there is nowo a gameState
+  attackingPlayer = gameState.players[0].name;
+  defendingPlayer = gameState.players[1].name;
+  //invoke function to either show or hide startGameModal, at this usage it will hide the modal as there is not a gameState
   newGameShowHide();
   clearInputFields();
 });
