@@ -8,7 +8,7 @@
     height: fit-content;
 }
 
-#player-inputs {
+#start-game-inputs {
     display: inline-flex;
     flex-direction: column;
     gap: 5px;
@@ -26,8 +26,8 @@
 body{
     max-height: 100vh;
     max-width: 100vw;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    justify-items: center;
 }
 
 #switch-player-modal{
