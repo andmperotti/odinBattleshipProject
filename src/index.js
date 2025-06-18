@@ -143,7 +143,7 @@ function buildSeaBoard(player) {
     for (let j = 0; j < player.playerInstance.gameboard.sea[i].length; j++) {
       let seaSpot = document.createElement("span");
       seaSpot.className = "sea-spot";
-      seaSpot.dataset.elementId = `${i},${j}`;
+      seaSpot.dataset.seaId = `${i},${j}`;
       seaSpot.textContent = player.playerInstance.gameboard.sea[i][j];
       seaRow.appendChild(seaSpot);
     }
