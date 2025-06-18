@@ -7,6 +7,8 @@ gameTitle.textContent = "Battleship";
 body.appendChild(gameTitle);
 //create variable to keep track of a game in progress
 let gameState = false;
+let playerOneSeaBoard;
+let playerTwoSeaBoard;
 newGameShowHide();
 
 //new game modal
@@ -83,6 +85,9 @@ function newGameModal() {
     let playerTwoName = document.querySelector("#player-two-name").value;
     let playerTwoType = document.querySelector("#player-two-type").value;
     gameState = game(playerOneName, playerTwoName, playerTwoType);
+    //invoke buildSeaBoard() to create player boards that will be used in turns
+    playerOneSeaBoard = buildSeaBoard(gameState.players[0]);
+    playerTwoSeaBoard = buildSeaBoard(gameState.players[1]);
     //call function to hide startGameModal, followed by the function to clear that modals input values
     startGameModal.remove();
     //if there are two human players that show the switch player modal to alert the users its player1's turn, which will be followed by ship placement
@@ -96,9 +101,6 @@ function newGameShowHide() {
   if (!gameState) {
     newGameModal();
   }
-  // else {
-  //   startGameModal.style.display = "inline-flex";
-  // }
 }
 
 //switch player modal function
@@ -119,12 +121,34 @@ function switchPlayerModal() {
   switchPlayerNotice.textContent = `Please give the computer to: ${gameState.attackingPlayer.name}`;
   switchPlayerModal.appendChild(switchPlayerNotice);
 
-  //event listener for switch player modal switch button, which initially will just hide the switch player modal, later will show the attacking players gameboard
+  //event listener for switch player modal switch button, which initially will just hide the switch player modal, later will show the attacking players seaBoard
   switchPlayerButton.addEventListener("click", () => {
     gameState.switchPlayers();
     switchPlayerModal.remove();
-    //and show gameboard of next player
+    //and show seaBoard of next player
+    body.appendChild(playerOneSeaBoard);
   });
+}
+
+function buildSeaBoard(player) {
+  let seaBoard = document.createElement("section");
+  seaBoard.class = "sea-board";
+  //build rows of seaBoard, i is the y axis
+  for (let i = 0; i < player.playerInstance.gameboard.sea.length; i++) {
+    let seaRow = document.createElement("section");
+    seaRow.class = "sea-row";
+    seaRow.dataset.rowId = i;
+    seaBoard.appendChild(seaRow);
+    //build spans for each element in the row, j is the x axis
+    for (let j = 0; j < player.playerInstance.gameboard.sea[i].length; j++) {
+      let seaSpot = document.createElement("span");
+      seaSpot.class = "sea-spot";
+      seaSpot.dataset.elementId = `${i},${j}`;
+      seaSpot.textContent = player.playerInstance.gameboard.sea[i][j];
+      seaRow.appendChild(seaSpot);
+    }
+  }
+  return seaBoard;
 }
 
 //player1 position boats and of what size
@@ -160,13 +184,11 @@ function switchPlayerModal() {
 
 //when a player has won
 //tell that user right after their attack has landed the last killing blow on the last ship, button to click to close
-//display final result modal, which shows both gameboards and displays timer of the game
+//display final result modal, which shows both seaBoard and displays timer of the game
 
 //if one human player
 //player 1 attacks computer ships, confirms attack
 //player 1 is told computer has hit or missed and where
 //repeat until either player1 or computer has lost
 //message that tells human who has won, click confirm
-//shows final result page with both gameboards
-
-//gameboard function, given a player it displays their attacking gameboard, adn their defending gameboard, both
+//shows final result page with both seaBoard
