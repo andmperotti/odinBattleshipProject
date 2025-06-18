@@ -10,11 +10,6 @@ export function gameboard() {
 
   let boats = [];
 
-  //getSea returns sea for testing purposes for now
-  function getSea() {
-    return sea;
-  }
-
   function receiveAttack(y, x) {
     let spotValue = sea[y][x];
     //for now this logic just checks the coordinates and changes the value accordingly or logs a statement that that position was already attacked
@@ -127,10 +122,12 @@ export function gameboard() {
   }
 
   return {
-    getSea,
     receiveAttack,
     placeShip,
     boatsRemaining,
     _isGameboardInstance,
+    get sea() {
+      return sea;
+    },
   };
 }
