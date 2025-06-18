@@ -5,10 +5,25 @@ export function game(playerOneName, playerTwoName, playerTwoType) {
     { name: playerOneName, playerInstance: new Player() },
     { name: playerTwoName, playerInstance: new Player(playerTwoType) },
   ];
+  let attackingPlayer = players[0];
+  let defendingPlayer = players[1];
 
-  return { players };
+  function switchPlayers() {
+    let tempPlaceholder = attackingPlayer;
+    attackingPlayer = defendingPlayer;
+    defendingPlayer = tempPlaceholder;
+  }
+
+  return {
+    players,
+    get attackingPlayer() {
+      return attackingPlayer;
+    },
+    get defendingPlayer() {
+      return defendingPlayer;
+    },
+    switchPlayers,
+  };
 }
 
-// module.exports = { game };
-// exports.game;
-//Make the game object hold the values for player names and types, make game hold logic for the game actions. Change new game modal to hidden, not removed, that way when player clicks new game button we don't have to remake it
+//Make the game object hold the values for player names and types, make game hold logic for the game actions.
