@@ -41,3 +41,15 @@ body{
 #switch-player-modal button {
     width: 50%;
 }   
+
+.sea-board{
+    border: 1px solid red;
+    font-size: 2rem;
+}
+.sea-row{
+    /* margin: 1px; */
+}
+.sea-spot{
+    margin: 1px;
+    border: 1px solid gray;
+}
