@@ -7,104 +7,98 @@ gameTitle.textContent = "Battleship";
 body.appendChild(gameTitle);
 //create variable to keep track of a game in progress
 let gameState = false;
+newGameShowHide();
 
 //new game modal
-let startGameModal = document.createElement("div");
-body.appendChild(startGameModal);
-//header for startGameModal
-let startGameHeader = document.createElement("h1");
-startGameHeader.textContent = "New Game";
-startGameModal.appendChild(startGameHeader);
-startGameModal.id = "start-game-modal";
-//create form element for inputs
-let startGameInputs = document.createElement("form");
-startGameInputs.id = "start-game-inputs";
-//create and add input elements to form
-let playerOneLabel = document.createElement("label");
-playerOneLabel.textContent = "Player 1 Name";
-let playerOneInput = document.createElement("input");
-playerOneInput.required = true;
-playerOneInput.placeholder = "ex: Drew";
-playerOneInput.id = "player-one-name";
-playerOneInput.autocomplete = "off";
-playerOneLabel.appendChild(playerOneInput);
-startGameInputs.appendChild(playerOneLabel);
-let playerTwoNameLabel = document.createElement("label");
-playerTwoNameLabel.textContent = "Player 2 Name";
-let playerTwoNameInput = document.createElement("input");
-playerTwoNameInput.placeholder = "ex: Steven";
-playerTwoNameInput.id = "player-two-name";
-playerTwoNameInput.autocomplete = "off";
-playerTwoNameLabel.appendChild(playerTwoNameInput);
-startGameInputs.appendChild(playerTwoNameLabel);
-//fieldset to contain radio inputs
-let playerTwoTypeFieldset = document.createElement("fieldset");
-let playerTwoTypeLegend = document.createElement("legend");
-playerTwoTypeLegend.textContent = "Player 2 type";
-playerTwoTypeFieldset.id = "player-two-type";
-playerTwoTypeFieldset.appendChild(playerTwoTypeLegend);
-//radio inputs with labels
-let playerTwoTypeRadioHuman = document.createElement("input");
-playerTwoTypeRadioHuman.type = "radio";
-playerTwoTypeRadioHuman.value = "human";
-playerTwoTypeRadioHuman.required = true;
-playerTwoTypeRadioHuman.id = "player-two-human";
-playerTwoTypeRadioHuman.name = "type";
-let playerTwoTypeRadioHumanLabel = document.createElement("label");
-playerTwoTypeRadioHumanLabel.textContent = "Human";
-playerTwoTypeRadioHumanLabel.for = "player-two-human";
-playerTwoTypeFieldset.appendChild(playerTwoTypeRadioHuman);
-playerTwoTypeFieldset.appendChild(playerTwoTypeRadioHumanLabel);
-let playerTwoTypeRadioComputer = document.createElement("input");
-playerTwoTypeRadioComputer.type = "radio";
-playerTwoTypeRadioComputer.name = "type";
-playerTwoTypeRadioComputer.id = "player-two-computer";
-playerTwoTypeFieldset.appendChild(playerTwoTypeRadioComputer);
-let playerTwoTypeRadioComputerLabel = document.createElement("label");
-playerTwoTypeRadioComputerLabel.for = "player-two-computer";
-playerTwoTypeRadioComputerLabel.textContent = "Computer";
-playerTwoTypeFieldset.appendChild(playerTwoTypeRadioComputerLabel);
-startGameInputs.appendChild(playerTwoTypeFieldset);
-//button for submitting input and starting game
-let beginGameButton = document.createElement("button");
-beginGameButton.type = "submit";
-beginGameButton.textContent = "Commence Battle";
-beginGameButton.id = "begin-game";
-startGameInputs.appendChild(beginGameButton);
-//add button to start game modal
-startGameModal.appendChild(startGameInputs);
+function newGameModal() {
+  let startGameModal = document.createElement("div");
+  body.appendChild(startGameModal);
+  //header for startGameModal
+  let startGameHeader = document.createElement("h1");
+  startGameHeader.textContent = "New Game";
+  startGameModal.appendChild(startGameHeader);
+  startGameModal.id = "start-game-modal";
+  //create form element for inputs
+  let startGameInputs = document.createElement("form");
+  startGameInputs.id = "start-game-inputs";
+  //create and add input elements to form
+  let playerOneLabel = document.createElement("label");
+  playerOneLabel.textContent = "Player 1 Name";
+  let playerOneInput = document.createElement("input");
+  playerOneInput.required = true;
+  playerOneInput.placeholder = "ex: Drew";
+  playerOneInput.id = "player-one-name";
+  playerOneInput.autocomplete = "off";
+  playerOneLabel.appendChild(playerOneInput);
+  startGameInputs.appendChild(playerOneLabel);
+  let playerTwoNameLabel = document.createElement("label");
+  playerTwoNameLabel.textContent = "Player 2 Name";
+  let playerTwoNameInput = document.createElement("input");
+  playerTwoNameInput.placeholder = "ex: Steven";
+  playerTwoNameInput.id = "player-two-name";
+  playerTwoNameInput.autocomplete = "off";
+  playerTwoNameLabel.appendChild(playerTwoNameInput);
+  startGameInputs.appendChild(playerTwoNameLabel);
+  //fieldset to contain radio inputs
+  let playerTwoTypeFieldset = document.createElement("fieldset");
+  let playerTwoTypeLegend = document.createElement("legend");
+  playerTwoTypeLegend.textContent = "Player 2 type";
+  playerTwoTypeFieldset.id = "player-two-type";
+  playerTwoTypeFieldset.appendChild(playerTwoTypeLegend);
+  //radio inputs with labels
+  let playerTwoTypeRadioHuman = document.createElement("input");
+  playerTwoTypeRadioHuman.type = "radio";
+  playerTwoTypeRadioHuman.value = "human";
+  playerTwoTypeRadioHuman.required = true;
+  playerTwoTypeRadioHuman.id = "player-two-human";
+  playerTwoTypeRadioHuman.name = "type";
+  let playerTwoTypeRadioHumanLabel = document.createElement("label");
+  playerTwoTypeRadioHumanLabel.textContent = "Human";
+  playerTwoTypeRadioHumanLabel.for = "player-two-human";
+  playerTwoTypeFieldset.appendChild(playerTwoTypeRadioHuman);
+  playerTwoTypeFieldset.appendChild(playerTwoTypeRadioHumanLabel);
+  let playerTwoTypeRadioComputer = document.createElement("input");
+  playerTwoTypeRadioComputer.type = "radio";
+  playerTwoTypeRadioComputer.name = "type";
+  playerTwoTypeRadioComputer.id = "player-two-computer";
+  playerTwoTypeFieldset.appendChild(playerTwoTypeRadioComputer);
+  let playerTwoTypeRadioComputerLabel = document.createElement("label");
+  playerTwoTypeRadioComputerLabel.for = "player-two-computer";
+  playerTwoTypeRadioComputerLabel.textContent = "Computer";
+  playerTwoTypeFieldset.appendChild(playerTwoTypeRadioComputerLabel);
+  startGameInputs.appendChild(playerTwoTypeFieldset);
+  //button for submitting input and starting game
+  let beginGameButton = document.createElement("button");
+  beginGameButton.type = "submit";
+  beginGameButton.textContent = "Commence Battle";
+  beginGameButton.id = "begin-game";
+  startGameInputs.appendChild(beginGameButton);
+  //add button to start game modal
+  startGameModal.appendChild(startGameInputs);
 
+  //listener on form that sends input values to variables and technically starts game
+  startGameInputs.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let playerOneName = document.querySelector("#player-one-name").value;
+    let playerTwoName = document.querySelector("#player-two-name").value;
+    let playerTwoType = document.querySelector("#player-two-type").value;
+    gameState = game(playerOneName, playerTwoName, playerTwoType);
+    //call function to hide startGameModal, followed by the function to clear that modals input values
+    startGameModal.remove();
+    //if there are two human players that show the switch player modal to alert the users its player1's turn, which will be followed by ship placement
+    if (gameState.players[1].playerInstance.type === "human") {
+      switchPlayerModal();
+    }
+  });
+}
 //display game start modal when there is not a current game running. At load there is no gameState therefore the startGameModal shows
 function newGameShowHide() {
-  if (gameState) {
-    startGameModal.style.display = "none";
-  } else {
-    startGameModal.style.display = "inline-flex";
+  if (!gameState) {
+    newGameModal();
   }
-}
-
-//listener on form that sends input values to variables and technically starts game
-startGameInputs.addEventListener("submit", (e) => {
-  e.preventDefault();
-  let playerOneName = document.querySelector("#player-one-name").value;
-  let playerTwoName = document.querySelector("#player-two-name").value;
-  let playerTwoType = document.querySelector("#player-two-type").value;
-  gameState = game(playerOneName, playerTwoName, playerTwoType);
-  //call function to hide startGameModal, followed by the function to clear that modals input values
-  newGameShowHide();
-  clearInputFields();
-  //if there are two human players that show the switch player modal to alert the users its player1's turn, which will be followed by ship placement
-  if (gameState.players[1].playerInstance.type === "human") {
-    switchPlayerModal();
-  }
-});
-
-//function to clear input fields of startGameModal
-function clearInputFields() {
-  playerOneInput.value = "";
-  playerTwoNameInput.value = "";
-  playerTwoTypeRadioHuman.checked = false;
-  playerTwoTypeRadioComputer.checked = false;
+  // else {
+  //   startGameModal.style.display = "inline-flex";
+  // }
 }
 
 //switch player modal function
