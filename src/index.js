@@ -2,23 +2,23 @@ import { game } from "./game.js";
 import "./style.css";
 
 let body = document.querySelector("body");
+let gameTitle = document.createElement("h1");
+gameTitle.textContent = "Battleship";
+body.appendChild(gameTitle);
 //create variable to keep track of a game in progress
 let gameState = false;
-//variables to keep track of which player is attacking and defending
-let attackingPlayer;
-let defendingPlayer;
 
 //new game modal
 let startGameModal = document.createElement("div");
 body.appendChild(startGameModal);
 //header for startGameModal
 let startGameHeader = document.createElement("h1");
-startGameHeader.textContent = "Battleship";
+startGameHeader.textContent = "New Game";
 startGameModal.appendChild(startGameHeader);
 startGameModal.id = "start-game-modal";
 //create form element for inputs
-let playerInputs = document.createElement("form");
-playerInputs.id = "player-inputs";
+let startGameInputs = document.createElement("form");
+startGameInputs.id = "start-game-inputs";
 //create and add input elements to form
 let playerOneLabel = document.createElement("label");
 playerOneLabel.textContent = "Player 1 Name";
@@ -28,7 +28,7 @@ playerOneInput.placeholder = "ex: Drew";
 playerOneInput.id = "player-one-name";
 playerOneInput.autocomplete = "off";
 playerOneLabel.appendChild(playerOneInput);
-playerInputs.appendChild(playerOneLabel);
+startGameInputs.appendChild(playerOneLabel);
 let playerTwoNameLabel = document.createElement("label");
 playerTwoNameLabel.textContent = "Player 2 Name";
 let playerTwoNameInput = document.createElement("input");
@@ -36,7 +36,7 @@ playerTwoNameInput.placeholder = "ex: Steven";
 playerTwoNameInput.id = "player-two-name";
 playerTwoNameInput.autocomplete = "off";
 playerTwoNameLabel.appendChild(playerTwoNameInput);
-playerInputs.appendChild(playerTwoNameLabel);
+startGameInputs.appendChild(playerTwoNameLabel);
 //fieldset to contain radio inputs
 let playerTwoTypeFieldset = document.createElement("fieldset");
 let playerTwoTypeLegend = document.createElement("legend");
@@ -64,15 +64,15 @@ let playerTwoTypeRadioComputerLabel = document.createElement("label");
 playerTwoTypeRadioComputerLabel.for = "player-two-computer";
 playerTwoTypeRadioComputerLabel.textContent = "Computer";
 playerTwoTypeFieldset.appendChild(playerTwoTypeRadioComputerLabel);
-playerInputs.appendChild(playerTwoTypeFieldset);
+startGameInputs.appendChild(playerTwoTypeFieldset);
 //button for submitting input and starting game
 let beginGameButton = document.createElement("button");
 beginGameButton.type = "submit";
 beginGameButton.textContent = "Commence Battle";
 beginGameButton.id = "begin-game";
-playerInputs.appendChild(beginGameButton);
+startGameInputs.appendChild(beginGameButton);
 //add button to start game modal
-startGameModal.appendChild(playerInputs);
+startGameModal.appendChild(startGameInputs);
 
 //display game start modal when there is not a current game running. At load there is no gameState therefore the startGameModal shows
 function newGameShowHide() {
@@ -84,18 +84,19 @@ function newGameShowHide() {
 }
 
 //listener on form that sends input values to variables and technically starts game
-playerInputs.addEventListener("submit", (e) => {
+startGameInputs.addEventListener("submit", (e) => {
   e.preventDefault();
   let playerOneName = document.querySelector("#player-one-name").value;
   let playerTwoName = document.querySelector("#player-two-name").value;
   let playerTwoType = document.querySelector("#player-two-type").value;
   gameState = game(playerOneName, playerTwoName, playerTwoType);
-  attackingPlayer = gameState.players[0].name;
-  defendingPlayer = gameState.players[1].name;
-  //invoke function to either show or hide startGameModal, at this usage it will hide the modal as there is not a gameState
+  //call function to hide startGameModal, followed by the function to clear that modals input values
   newGameShowHide();
   clearInputFields();
-  switchPlayerModal();
+  //if there are two human players that show the switch player modal to alert the users its player1's turn, which will be followed by ship placement
+  if (gameState.players[1].playerInstance.type === "human") {
+    switchPlayerModal();
+  }
 });
 
 //function to clear input fields of startGameModal
@@ -112,7 +113,7 @@ function switchPlayerModal() {
   switchPlayerModal.style.display = "hidden";
   switchPlayerModal.id = "switch-player-modal";
   let contextSwitch = document.createElement("h2");
-  contextSwitch.textContent = `Please give the computer to ${attackingPlayer}`;
+  contextSwitch.textContent = "Switch Player";
   switchPlayerModal.appendChild(contextSwitch);
   let switchPlayerButton = document.createElement("button");
   switchPlayerButton.type = "button";
@@ -121,13 +122,12 @@ function switchPlayerModal() {
   body.appendChild(switchPlayerModal);
   switchPlayerModal.style.display = "grid";
   let switchPlayerNotice = document.createElement("p");
-  switchPlayerNotice.textContent = `Please give the computer to player: ${attackingPlayer}`;
+  switchPlayerNotice.textContent = `Please give the computer to: ${gameState.attackingPlayer.name}`;
   switchPlayerModal.appendChild(switchPlayerNotice);
 
   //event listener for switch player modal switch button, which initially will just hide the switch player modal, later will show the attacking players gameboard
   switchPlayerButton.addEventListener("click", () => {
-    attackingPlayer = defendingPlayer;
-    defendingPlayer = attackingPlayer;
+    gameState.switchPlayers();
     switchPlayerModal.remove();
     //and show gameboard of next player
   });
