@@ -132,17 +132,17 @@ function switchPlayerModal() {
 
 function buildSeaBoard(player) {
   let seaBoard = document.createElement("section");
-  seaBoard.class = "sea-board";
+  seaBoard.className = "sea-board";
   //build rows of seaBoard, i is the y axis
   for (let i = 0; i < player.playerInstance.gameboard.sea.length; i++) {
     let seaRow = document.createElement("section");
-    seaRow.class = "sea-row";
+    seaRow.className = "sea-row";
     seaRow.dataset.rowId = i;
     seaBoard.appendChild(seaRow);
     //build spans for each element in the row, j is the x axis
     for (let j = 0; j < player.playerInstance.gameboard.sea[i].length; j++) {
       let seaSpot = document.createElement("span");
-      seaSpot.class = "sea-spot";
+      seaSpot.className = "sea-spot";
       seaSpot.dataset.elementId = `${i},${j}`;
       seaSpot.textContent = player.playerInstance.gameboard.sea[i][j];
       seaRow.appendChild(seaSpot);
