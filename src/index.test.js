@@ -69,22 +69,18 @@ startBattle.click();
 test("creates a game instance with a players property that contains instances of Player and game, when the button is clicked and there is input meeting required fields", () => {
   //check if gameState is truthy, as it was initialized false
   expect(gameState).toBeTruthy();
-  expect(gameState.players[0]).toMatchObject({
+  expect(gameState.players[0].playerInstance).toMatchObject({
     name: "Drew",
-    playerInstance: {
-      type: "human",
-    },
+    type: "human",
   });
   expect(gameState.players[0].playerInstance.gameboard).toHaveProperty(
     // eslint-disable-next-line prettier/prettier
     `_isGameboardInstance`
   );
 
-  expect(gameState.players[1]).toMatchObject({
+  expect(gameState.players[1].playerInstance).toMatchObject({
     name: "Steven",
-    playerInstance: {
-      type: "human",
-    },
+    type: "human",
   });
   expect(gameState.players[1].playerInstance.gameboard).toHaveProperty(
     // eslint-disable-next-line prettier/prettier
