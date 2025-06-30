@@ -1,27 +1,40 @@
 import { Ship } from "./ship.js";
 
-export function gameboard() {
-  const _isGameboardInstance = true;
+export class Gameboard {
+  constructor() {}
+  _boats = [];
 
-  let sea = Array.from({ length: 10 }, () =>
+  _isGameboardInstance = true;
+
+  get isGameboardInstance() {
+    return this._isGameboardInstance;
+  }
+
+  _sea = Array.from({ length: 10 }, () =>
     // eslint-disable-next-line prettier/prettier
     Array.from({ length: 10 }, () => 0)
   );
 
-  let misses = 0;
+  get sea() {
+    return this._sea;
+  }
 
-  let boats = [];
+  _misses = 0;
 
-  function receiveAttack(y, x) {
-    let spotValue = sea[y][x];
+  get misses() {
+    return this._misses;
+  }
+
+  receiveAttack(y, x) {
+    let spotValue = this.sea[y][x];
     //for now this logic just checks the coordinates and changes the value accordingly or logs a statement that that position was already attacked
     if (spotValue === 0) {
-      sea[y][x] = "-";
+      this.sea[y][x] = "-";
       //miss
-      misses++
+      this._misses++;
     } else if (spotValue > 0) {
-      boats[spotValue - 1].hit();
-      sea[y][x] = "+";
+      this._boats[spotValue - 1].hit();
+      this.sea[y][x] = "+";
       //hit
     } else {
       console.log("position already attacked, try again");
@@ -29,42 +42,42 @@ export function gameboard() {
     //later will have to add logic for ship to take damage, could instead of using just 0's and 1's, use any number > 0 to correspond to a specific boat
   }
 
-  function placeShip(y, x, orientation, length) {
+  placeShip(y, x, orientation, length) {
     //check for range of prospective ship length to make sure there is 1. room to fit the ship, and 2. no ship already in the prospective coordinates and length
     if (
       orientation === "up" &&
-      withinSeaRange(y, x) &&
-      withinSeaRange(y + length, x) &&
-      vacancyChecker(y, x, orientation, length)
+      this._withinSeaRange(y, x) &&
+      this._withinSeaRange(y + length, x) &&
+      this._vacancyChecker(y, x, orientation, length)
     ) {
-      addShip(y, x, orientation, length);
+      this.addShip(y, x, orientation, length);
     } else if (
       orientation === "down" &&
-      withinSeaRange(y, x) &&
-      withinSeaRange(y - length, x) &&
-      vacancyChecker(y, x, orientation, length)
+      this._withinSeaRange(y, x) &&
+      this._withinSeaRange(y - length, x) &&
+      this._vacancyChecker(y, x, orientation, length)
     ) {
-      addShip(y, x, orientation, length);
+      this.addShip(y, x, orientation, length);
     } else if (
       orientation === "right" &&
-      withinSeaRange(y, x) &&
-      withinSeaRange(y, x + length) &&
-      vacancyChecker(y, x, orientation, length)
+      this._withinSeaRange(y, x) &&
+      this._withinSeaRange(y, x + length) &&
+      this._vacancyChecker(y, x, orientation, length)
     ) {
-      addShip(y, x, orientation, length);
+      this.addShip(y, x, orientation, length);
     } else if (
       orientation === "left" &&
-      withinSeaRange(y, x) &&
-      withinSeaRange(y, x - length) &&
-      vacancyChecker(y, x, orientation, length)
+      this._withinSeaRange(y, x) &&
+      this._withinSeaRange(y, x - length) &&
+      this._vacancyChecker(y, x, orientation, length)
     ) {
-      addShip(y, x, orientation, length);
+      this.addShip(y, x, orientation, length);
     } else {
       console.log("location occupied");
     }
   }
 
-  function withinSeaRange(y, x) {
+  _withinSeaRange(y, x) {
     if (y >= 0 && y <= 9 && x >= 0 && x <= 9) {
       return true;
     } else {
@@ -72,23 +85,23 @@ export function gameboard() {
     }
   }
 
-  function vacancyChecker(y, x, orientation, length) {
+  _vacancyChecker(y, x, orientation, length) {
     let turn = 0;
     let wantedSpots = Array.from({ length: length }, () => {
       if (orientation === "up") {
-        let prospectiveSlot = sea[y + turn][x];
+        let prospectiveSlot = this.sea[y + turn][x];
         turn++;
         return prospectiveSlot;
       } else if (orientation === "down") {
-        let prospectiveSlot = sea[y - turn][x];
+        let prospectiveSlot = this.sea[y - turn][x];
         turn++;
         return prospectiveSlot;
       } else if (orientation === "right") {
-        let prospectiveSlot = sea[y][x + turn];
+        let prospectiveSlot = this.sea[y][x + turn];
         turn++;
         return prospectiveSlot;
       } else if (orientation === "left") {
-        let prospectiveSlot = sea[y][x - turn];
+        let prospectiveSlot = this.sea[y][x - turn];
         turn++;
         return prospectiveSlot;
       }
@@ -100,40 +113,27 @@ export function gameboard() {
     }
   }
 
-  function addShip(y, x, orientation, length) {
+  addShip(y, x, orientation, length) {
     let turn = 0;
-    boats.push(new Ship(length));
+    this._boats.push(new Ship(length));
     while (turn < length) {
       if (orientation === "up") {
-        sea[y + turn][x] = boats.length;
+        this.sea[y + turn][x] = this._boats.length;
         turn++;
       } else if (orientation === "down") {
-        sea[y - turn][x] = boats.length;
+        this.sea[y - turn][x] = this._boats.length;
         turn++;
       } else if (orientation === "left") {
-        sea[y][x - turn] = boats.length;
+        this.sea[y][x - turn] = this._boats.length;
         turn++;
       } else if (orientation === "right") {
-        sea[y][x + turn] = boats.length;
+        this.sea[y][x + turn] = this._boats.length;
         turn++;
       }
     }
   }
 
-  function boatsRemaining() {
-    return boats.filter((boat) => !boat.sunk).length;
+  boatsRemaining() {
+    return this._boats.filter((boat) => !boat.sunk).length;
   }
-
-  return {
-    receiveAttack,
-    placeShip,
-    boatsRemaining,
-    _isGameboardInstance,
-    get sea() {
-      return sea;
-    },
-    get misses() {
-      return misses;
-    },
-  };
 }
