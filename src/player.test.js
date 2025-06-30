@@ -1,15 +1,21 @@
 import { describe, expect, test } from "@jest/globals";
-import { gameboard } from "./gameboard.js";
+import { Gameboard } from "./gameboard.js";
 import { Player } from "./player.js";
 
 describe("Player class tests", () => {
   test("test player type", () => {
-    expect(new Player("human")).toMatchObject({ type: "human" });
-    expect(new Player("computer")).toMatchObject({ type: "computer" });
+    expect(new Player("andrew", "human")).toMatchObject({
+      name: "andrew",
+      type: "human",
+    });
+    expect(new Player("ai", "computer")).toMatchObject({
+      name: "ai",
+      type: "computer",
+    });
   });
 
   test("test player gameboard", () => {
-    let testPlayer = new Player("human");
-    expect(testPlayer.gameboard).toHaveProperty(`_isGameboardInstance`);
+    let testPlayer = new Player("steve", "human");
+    expect(testPlayer.gameboard.isGameboardInstance).toBe(true);
   });
 });
