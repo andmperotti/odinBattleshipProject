@@ -1,9 +1,9 @@
 import { describe, expect, test } from "@jest/globals";
-import { gameboard } from "./gameboard.js";
-import { ship } from "./ship.js";
+import { Gameboard } from "./gameboard.js";
+// import { Ship } from "./ship.js";
 
 test("initialized sea board", () => {
-  expect(gameboard().getSea()).toMatchObject([
+  expect(new Gameboard().sea).toMatchObject([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -18,9 +18,9 @@ test("initialized sea board", () => {
 });
 
 test("testSea attack miss", () => {
-  let testSea = gameboard();
+  let testSea = new Gameboard();
   testSea.receiveAttack(0, 0);
-  expect(testSea.getSea()).toMatchObject([
+  expect(testSea.sea).toMatchObject([
     ["-", 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -35,9 +35,9 @@ test("testSea attack miss", () => {
 });
 
 test("placing ships", () => {
-  let testSea = gameboard();
+  let testSea = new Gameboard();
   testSea.placeShip(2, 3, "right", 2);
-  expect(testSea.getSea()).toMatchObject([
+  expect(testSea.sea).toMatchObject([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
@@ -50,7 +50,7 @@ test("placing ships", () => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
   testSea.placeShip(5, 6, "down", 1);
-  expect(testSea.getSea()).toMatchObject([
+  expect(testSea.sea).toMatchObject([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
@@ -65,9 +65,9 @@ test("placing ships", () => {
 });
 
 test("receive attack", () => {
-  let testSea = new gameboard();
+  let testSea = new Gameboard();
   testSea.placeShip(0, 0, "right", 3);
-  expect(testSea.getSea()).toMatchObject([
+  expect(testSea.sea).toMatchObject([
     [1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -81,7 +81,7 @@ test("receive attack", () => {
   ]);
 
   testSea.receiveAttack(0, 0);
-  expect(testSea.getSea()).toMatchObject([
+  expect(testSea.sea).toMatchObject([
     ["+", 1, 1, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -96,7 +96,7 @@ test("receive attack", () => {
 });
 
 test("Ships still remaining", () => {
-  let testBoard = new gameboard();
+  let testBoard = new Gameboard();
   //   expect(testBoard.boats.filter((boat) => !boat.sunk).length).toBe(0);
   expect(testBoard.boatsRemaining()).toBe(0);
   testBoard.placeShip(0, 0, "right", 1);
