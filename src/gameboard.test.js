@@ -1,6 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
 import { Gameboard } from "./gameboard.js";
-// import { Ship } from "./ship.js";
 
 test("initialized sea board", () => {
   expect(new Gameboard().sea).toMatchObject([
