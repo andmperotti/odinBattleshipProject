@@ -2,8 +2,10 @@ import { Player } from "./player.js";
 
 export function game(playerOneName, playerTwoName, playerTwoType) {
   let players = [
-    { name: playerOneName, playerInstance: new Player() },
-    { name: playerTwoName, playerInstance: new Player(playerTwoType) },
+    { playerInstance: new Player(playerOneName) },
+    {
+      playerInstance: new Player(playerTwoName, playerTwoType),
+    },
   ];
   let attackingPlayer = players[0];
   let defendingPlayer = players[1];
