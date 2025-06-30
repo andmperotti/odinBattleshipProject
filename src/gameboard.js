@@ -8,6 +8,8 @@ export function gameboard() {
     Array.from({ length: 10 }, () => 0)
   );
 
+  let misses = 0;
+
   let boats = [];
 
   function receiveAttack(y, x) {
@@ -16,6 +18,7 @@ export function gameboard() {
     if (spotValue === 0) {
       sea[y][x] = "-";
       //miss
+      misses++
     } else if (spotValue > 0) {
       boats[spotValue - 1].hit();
       sea[y][x] = "+";
@@ -128,6 +131,9 @@ export function gameboard() {
     _isGameboardInstance,
     get sea() {
       return sea;
+    },
+    get misses() {
+      return misses;
     },
   };
 }
