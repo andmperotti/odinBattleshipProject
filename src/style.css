@@ -18,9 +18,10 @@
     margin-left: 5px;
 }
 
-#player-two-type-fieldset{
-    display: flex;
+#player-two-type{
+    display: flex; 
     align-items: baseline;
+    justify-content: space-around;
 }
 
 body{
@@ -42,14 +43,46 @@ body{
     width: 50%;
 }   
 
-.sea-board{
-    border: 1px solid red;
-    font-size: 2rem;
+.sea-board, 
+.attack-sea-board{
+    border: 2px solid red;
+    font-size: 2.5rem;
+    display: inline-block;
 }
-.sea-row{
+
+.sea-spot, 
+.attack-sea-spot {
     /* margin: 1px; */
+    border: 2px solid black;
+    display: inline-block;
+    width: 1ch;
+    height: 2ch;
+    padding: 1px;
 }
-.sea-spot{
-    margin: 1px;
-    border: 1px solid gray;
+
+#place-ships{
+    background-color: gray;
+    display: grid;
+    text-align: center;
+}
+
+.player-identifier {
+    font-size: 1.2rem;
+}
+
+
+.attack-screen {
+    background-color: green;
+}
+
+/*styling background of seaSpots to describe hit or miss, or unattacked*/
+.unattacked {
+    background-color: blue;
+}
+.missed-attack {
+    background-color: yellow;
+}
+
+.hit-attack {
+    background-color: green;
 }
