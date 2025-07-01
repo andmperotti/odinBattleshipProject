@@ -8,6 +8,7 @@ export default [
   eslintConfigPrettier,
   eslintPluginPrettierRecommended,
   {
+    files: ["**/*.js", "**/*.mjs", "**/*.cjs"],
     languageOptions: {
       globals: {
         ...globals.browser,
