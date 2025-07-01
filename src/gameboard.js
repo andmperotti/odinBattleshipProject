@@ -4,6 +4,10 @@ export class Gameboard {
   constructor() {}
   _boats = [];
 
+  get boats() {
+    return this._boats;
+  }
+
   _isGameboardInstance = true;
 
   get isGameboardInstance() {
@@ -50,28 +54,28 @@ export class Gameboard {
       this._withinSeaRange(y + length, x) &&
       this._vacancyChecker(y, x, orientation, length)
     ) {
-      this.addShip(y, x, orientation, length);
+      this._addShip(y, x, orientation, length);
     } else if (
       orientation === "down" &&
       this._withinSeaRange(y, x) &&
       this._withinSeaRange(y - length, x) &&
       this._vacancyChecker(y, x, orientation, length)
     ) {
-      this.addShip(y, x, orientation, length);
+      this._addShip(y, x, orientation, length);
     } else if (
       orientation === "right" &&
       this._withinSeaRange(y, x) &&
       this._withinSeaRange(y, x + length) &&
       this._vacancyChecker(y, x, orientation, length)
     ) {
-      this.addShip(y, x, orientation, length);
+      this._addShip(y, x, orientation, length);
     } else if (
       orientation === "left" &&
       this._withinSeaRange(y, x) &&
       this._withinSeaRange(y, x - length) &&
       this._vacancyChecker(y, x, orientation, length)
     ) {
-      this.addShip(y, x, orientation, length);
+      this._addShip(y, x, orientation, length);
     } else {
       console.log("location occupied");
     }
@@ -113,22 +117,23 @@ export class Gameboard {
     }
   }
 
-  addShip(y, x, orientation, length) {
-    let turn = 0;
+  _addShip(y, x, orientation, length) {
+    //variable to help us keep track of how many spots to take up for length of each ship
+    let counter = 0;
     this._boats.push(new Ship(length));
-    while (turn < length) {
+    while (counter < length) {
       if (orientation === "up") {
-        this.sea[y + turn][x] = this._boats.length;
-        turn++;
+        this.sea[y + counter][x] = this._boats.length;
+        counter++;
       } else if (orientation === "down") {
-        this.sea[y - turn][x] = this._boats.length;
-        turn++;
+        this.sea[y - counter][x] = this._boats.length;
+        counter++;
       } else if (orientation === "left") {
-        this.sea[y][x - turn] = this._boats.length;
-        turn++;
+        this.sea[y][x - counter] = this._boats.length;
+        counter++;
       } else if (orientation === "right") {
-        this.sea[y][x + turn] = this._boats.length;
-        turn++;
+        this.sea[y][x + counter] = this._boats.length;
+        counter++;
       }
     }
   }
