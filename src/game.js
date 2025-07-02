@@ -28,6 +28,7 @@ body.appendChild(gameTitle);
 //create variable to keep track of game in progress
 let gameState = false;
 let lastMove;
+let turnCount = 0;
 
 //initiate newGameModal at load / on refresh
 newGameShowHide();
@@ -320,6 +321,10 @@ function buildAttackModal() {
   attackModal.appendChild(defenseBoard);
   attackModal.appendChild(opponentsResult());
 
+  let turnCounter = document.createElement("h3");
+  turnCounter.textContent = `Turn: ${turnCount}`;
+  turnCounter.classList.add("turn-counter");
+  attackModal.appendChild(turnCounter);
   let attackExplainer = document.createElement("p");
   attackExplainer.textContent =
     "Click on a spot to attack it, a confirmation box will confirm your selection and the selected location will be highlighted";
@@ -327,7 +332,8 @@ function buildAttackModal() {
   attackModal.appendChild(attackExplainer);
 
   //listeners for attacks
-  //after a move is made save move to lastMove
+  //after a move is made save move result to lastMove
+  //increment turnCount
 
   //update opponents last move
   updateOpponentsResult();
@@ -365,7 +371,7 @@ function buildSeaBoard(player) {
   //build board for showing attacking players own sea
   if (player.name === gameState.attackingPlayer.name) {
     let seaBoard = document.createElement("section");
-    seaBoard.className = "sea-board";
+    seaBoard.className = "defense-sea-board";
     //build rows of seaBoard, i is the y axis
     for (let i = 0; i < player.gameboard.sea.length; i++) {
       let seaRow = document.createElement("section");
