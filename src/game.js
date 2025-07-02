@@ -303,10 +303,10 @@ function buildAttackModal() {
 
   body.appendChild(attackModal);
   let attackHeader = document.createElement("h2");
-  attackHeader.textContent = `${gameState.attackingPlayer.name}'s Attack Screen:`;
+  attackHeader.textContent = `Player ${gameState.attackingPlayer.name}'s Attack Screen:`;
   attackHeader.classList.add("attack-header");
   attackModal.appendChild(attackHeader);
-  //show opponents sea, filter elements to display things other than numbers: blue background with a space or underscore for a not attacked sea-spot, yellow background with a '-' for a miss, and green background color with a '+' for a hit.
+  //show opponents sea, convert elements to display things other than numbers: blue background with a space or underscore for a not attacked sea-spot, yellow background with a '-' for a miss, and green background color with a '+' for a hit.
   attackBoard = buildSeaBoard(gameState.defendingPlayer);
   attackModal.appendChild(attackBoard);
 
@@ -314,11 +314,17 @@ function buildAttackModal() {
 
   let defendingHeader = document.createElement("h2");
   defendingHeader.classList.add("defending-header");
-  defendingHeader.textContent = `${gameState.attackingPlayer.name}'s sea so far:`;
+  defendingHeader.textContent = `Player ${gameState.attackingPlayer.name}'s Defense Screen:`;
   attackModal.appendChild(defendingHeader);
   defenseBoard = buildSeaBoard(gameState.attackingPlayer);
   attackModal.appendChild(defenseBoard);
   attackModal.appendChild(opponentsResult());
+
+  let attackExplainer = document.createElement("p");
+  attackExplainer.textContent =
+    "Click on a spot to attack it, a confirmation box will confirm your selection and the selected location will be highlighted";
+  attackExplainer.classList.add("attack-explainer");
+  attackModal.appendChild(attackExplainer);
 
   //listeners for attacks
   //after a move is made save move to lastMove
@@ -371,14 +377,18 @@ function buildSeaBoard(player) {
         let seaSpot = document.createElement("span");
         seaSpot.className = "sea-spot";
         seaSpot.dataset.seaId = `${i},${j}`;
-        seaSpot.textContent = player.gameboard.sea[i][j];
+        if (player.gameboard.sea[i][j] === 0) {
+          seaSpot.textContent = " ";
+        } else {
+          seaSpot.textContent = player.gameboard.sea[i][j];
+        }
         seaRow.appendChild(seaSpot);
       }
     }
     return seaBoard;
-    //build board for showing attack sea, aka filtered defenders sea board
+    //build board for showing attack sea, aka converted defenders sea board
   } else if (player.name === gameState.defendingPlayer.name) {
-    let filteredSea = player.gameboard.sea.map((row) =>
+    let convertedSea = player.gameboard.sea.map((row) =>
       row.map((spot) => {
         if (typeof spot === "number") {
           return " ";
@@ -391,17 +401,17 @@ function buildSeaBoard(player) {
     let seaBoard = document.createElement("section");
     seaBoard.className = "attack-sea-board";
     //build rows of seaBoard, i is the y axis
-    for (let i = 0; i < filteredSea.length; i++) {
+    for (let i = 0; i < convertedSea.length; i++) {
       let seaRow = document.createElement("section");
       seaRow.className = "attack-sea-row";
       seaRow.dataset.rowId = i;
       seaBoard.appendChild(seaRow);
       //build spans for each element in the row, j is the x axis
-      for (let j = 0; j < filteredSea[i].length; j++) {
+      for (let j = 0; j < convertedSea[i].length; j++) {
         let seaSpot = document.createElement("span");
         seaSpot.className = "attack-sea-spot";
         seaSpot.dataset.seaId = `${i},${j}`;
-        seaSpot.textContent = filteredSea[i][j];
+        seaSpot.textContent = convertedSea[i][j];
         if (seaSpot.textContent === "-") {
           seaSpot.classList.add("unsuccessful-attack");
         } else if (seaSpot.textContent === "+") {
@@ -499,3 +509,6 @@ function updateOpponentsResult() {
 //
 //
 //when creating listeners on attack board, remember that the same classes are on spans in the seaKey, so target only those elements in that seaBoard element
+
+//
+//on the event listeners for attacking, maybe add a class to the span clicked with some kind of styling that makes it stick out, pop up a modal that verfies their selection with a yes and no button
