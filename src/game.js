@@ -309,7 +309,10 @@ function buildAttackModal() {
   attackModal.appendChild(attackHeader);
   //show opponents sea, convert elements to display things other than numbers: blue background with a space or underscore for a not attacked sea-spot, yellow background with a '-' for a miss, and green background color with a '+' for a hit.
   attackBoard = buildSeaBoard(gameState.defendingPlayer);
-  attackModal.appendChild(attackBoard);
+  let attackBoardHolder = document.createElement("section");
+  attackBoardHolder.appendChild(attackBoard);
+  attackBoardHolder.classList.add("attack-board-holder");
+  attackModal.appendChild(attackBoardHolder);
 
   attackModal.appendChild(buildSeaKey());
 
@@ -318,7 +321,10 @@ function buildAttackModal() {
   defendingHeader.textContent = `Player ${gameState.attackingPlayer.name}'s Defense Screen:`;
   attackModal.appendChild(defendingHeader);
   defenseBoard = buildSeaBoard(gameState.attackingPlayer);
-  attackModal.appendChild(defenseBoard);
+  let defenseBoardHolder = document.createElement("section");
+  defenseBoardHolder.classList.add("defense-board-holder");
+  defenseBoardHolder.appendChild(defenseBoard);
+  attackModal.appendChild(defenseBoardHolder);
   attackModal.appendChild(opponentsResult());
 
   let turnCounter = document.createElement("h3");
@@ -331,7 +337,24 @@ function buildAttackModal() {
   attackExplainer.classList.add("attack-explainer");
   attackModal.appendChild(attackExplainer);
 
-  //listeners for attacks
+  let attackerBoatsRemaining = document.createElement("h3");
+  attackerBoatsRemaining.classList.add("attacker-boats-remaining");
+  let attackerBoatCount = gameState.attackingPlayer.gameboard.boats.filter(
+    // eslint-disable-next-line prettier/prettier
+    (boat) => boat.sunk !== true
+  ).length;
+  attackerBoatsRemaining.textContent = `Your Ships left: ${attackerBoatCount} `;
+  attackModal.appendChild(attackerBoatsRemaining);
+
+  let defenseBoatsRemaining = gameState.defendingPlayer.gameboard.boats.filter(
+    (boat) => boat.sunk !== true
+  ).length;
+  let defenderBoatsRemaining = document.createElement("h3");
+  defenderBoatsRemaining.classList.add("defender-boats-remaining");
+  defenderBoatsRemaining.textContent = `Opponents ships left: ${defenseBoatsRemaining}`;
+  attackModal.appendChild(defenderBoatsRemaining);
+
+  //set listeners for attacks
   //after a move is made save move result to lastMove
   //increment turnCount
 
@@ -375,13 +398,13 @@ function buildSeaBoard(player) {
     //build rows of seaBoard, i is the y axis
     for (let i = 0; i < player.gameboard.sea.length; i++) {
       let seaRow = document.createElement("section");
-      seaRow.className = "sea-row";
+      seaRow.className = "defense-sea-row";
       seaRow.dataset.rowId = i;
       seaBoard.appendChild(seaRow);
       //build spans for each element in the row, j is the x axis
       for (let j = 0; j < player.gameboard.sea[i].length; j++) {
         let seaSpot = document.createElement("span");
-        seaSpot.className = "sea-spot";
+        seaSpot.className = "defense-sea-spot";
         seaSpot.dataset.seaId = `${i},${j}`;
         if (player.gameboard.sea[i][j] === 0) {
           seaSpot.textContent = " ";
@@ -439,15 +462,15 @@ function buildSeaKey() {
   seaKey.appendChild(seaKeyHeader);
   seaKey.classList.add("sea-key");
   let notAttackedDescription = document.createElement("p");
-  notAttackedDescription.innerHTML += `<span class="not-attacked sea-spot"> </span> === not attacked spot`;
+  notAttackedDescription.innerHTML += `<span class="not-attacked sea-spot"> </span> === non attacked spot`;
   notAttackedDescription.style.color = "blue";
   seaKey.appendChild(notAttackedDescription);
   let missedAttackDescription = document.createElement("p");
-  missedAttackDescription.innerHTML += `<span class="sea-spot unsuccessful-attack">-</span> === nothing at spot`;
+  missedAttackDescription.innerHTML += `<span class="sea-spot unsuccessful-attack">-</span> === attack missed`;
   missedAttackDescription.style.color = "yellow";
   seaKey.appendChild(missedAttackDescription);
   let successfulAttack = document.createElement("p");
-  successfulAttack.innerHTML += `<span class="successful-attack sea-spot">+</span> === successful hit`;
+  successfulAttack.innerHTML += `<span class="successful-attack sea-spot">+</span> === attack hit`;
   successfulAttack.style.color = "green";
   seaKey.appendChild(successfulAttack);
   return seaKey;
@@ -465,9 +488,6 @@ function opponentsResult() {
   return opponentsResultModal;
 }
 
-//testing opponentsResult
-// body.appendChild(opponentsResult());
-
 function updateOpponentsResult() {
   if (!lastMove) {
     document.querySelector(".opponents-move").textContent = "No move made";
@@ -475,8 +495,6 @@ function updateOpponentsResult() {
     document.querySelector(".opponents-move").textContent = `${lastMove}`;
   }
 }
-//test call to updateOpponentsResult function
-// updateOpponentsResult();
 
 //
 //function placeShips() {
