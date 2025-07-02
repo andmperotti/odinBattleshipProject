@@ -27,9 +27,7 @@ gameTitle.textContent = "Battleship";
 body.appendChild(gameTitle);
 //create variable to keep track of game in progress
 let gameState = false;
-//variables for storing gameboards to
-let defenseBoard;
-let attackBoard;
+let lastMove;
 
 //initiate newGameModal at load / on refresh
 newGameShowHide();
@@ -295,22 +293,38 @@ function firstMoveModal() {
 }
 
 function buildAttackModal() {
-  //we have playerOneSeaBoard and playerTwoSeaBoard already made at this point, which can be used for showing the attacker their own board
-  let attackScreen = document.createElement("section");
-  attackScreen.classList.add = "attack-screen";
+  //variables for storing gameboards to
+  let defenseBoard;
+  let attackBoard;
 
-  body.appendChild(attackScreen);
+  //create element to add to body for players to interact with when attacking other players ships
+  let attackModal = document.createElement("section");
+  attackModal.classList.add("attack-modal");
+
+  body.appendChild(attackModal);
   let attackHeader = document.createElement("h2");
-  attackHeader.textContent = `${gameState.attackingPlayer} Attack Screen`;
-  attackScreen.appendChild(attackHeader);
-  //show opponents sea, filter elements to display things other than numbers: blue background with a space or underscore for an unattacked sea-spot, yellow background with a '-' for a miss, and green background color with a '+' for a hit.
+  attackHeader.textContent = `${gameState.attackingPlayer.name}'s Attack Screen:`;
+  attackHeader.classList.add("attack-header");
+  attackModal.appendChild(attackHeader);
+  //show opponents sea, filter elements to display things other than numbers: blue background with a space or underscore for a not attacked sea-spot, yellow background with a '-' for a miss, and green background color with a '+' for a hit.
   attackBoard = buildSeaBoard(gameState.defendingPlayer);
-  attackScreen.appendChild(attackBoard);
+  attackModal.appendChild(attackBoard);
+
+  attackModal.appendChild(buildSeaKey());
+
   let defendingHeader = document.createElement("h2");
-  defendingHeader.textContent = "Your sea so far:";
-  attackScreen.appendChild(defendingHeader);
+  defendingHeader.classList.add("defending-header");
+  defendingHeader.textContent = `${gameState.attackingPlayer.name}'s sea so far:`;
+  attackModal.appendChild(defendingHeader);
   defenseBoard = buildSeaBoard(gameState.attackingPlayer);
-  attackScreen.appendChild(defenseBoard);
+  attackModal.appendChild(defenseBoard);
+  attackModal.appendChild(opponentsResult());
+
+  //listeners for attacks
+  //after a move is made save move to lastMove
+
+  //update opponents last move
+  updateOpponentsResult();
 }
 
 //switch player modal function
@@ -389,11 +403,11 @@ function buildSeaBoard(player) {
         seaSpot.dataset.seaId = `${i},${j}`;
         seaSpot.textContent = filteredSea[i][j];
         if (seaSpot.textContent === "-") {
-          seaSpot.classList.add("missed-attack");
+          seaSpot.classList.add("unsuccessful-attack");
         } else if (seaSpot.textContent === "+") {
-          seaSpot.classList.add("hit-attack");
+          seaSpot.classList.add("successful-attack");
         } else {
-          seaSpot.classList.add("unattacked");
+          seaSpot.classList.add("not-attacked");
         }
         seaRow.appendChild(seaSpot);
       }
@@ -401,6 +415,54 @@ function buildSeaBoard(player) {
     return seaBoard;
   }
 }
+
+function buildSeaKey() {
+  let seaKey = document.createElement("section");
+  let seaKeyHeader = document.createElement("h2");
+  seaKeyHeader.textContent = "Key";
+  seaKey.appendChild(seaKeyHeader);
+  seaKey.classList.add("sea-key");
+  let notAttackedDescription = document.createElement("p");
+  notAttackedDescription.innerHTML += `<span class="not-attacked sea-spot"> </span> === not attacked spot`;
+  notAttackedDescription.style.color = "blue";
+  seaKey.appendChild(notAttackedDescription);
+  let missedAttackDescription = document.createElement("p");
+  missedAttackDescription.innerHTML += `<span class="sea-spot unsuccessful-attack">-</span> === nothing at spot`;
+  missedAttackDescription.style.color = "yellow";
+  seaKey.appendChild(missedAttackDescription);
+  let successfulAttack = document.createElement("p");
+  successfulAttack.innerHTML += `<span class="successful-attack sea-spot">+</span> === successful hit`;
+  successfulAttack.style.color = "green";
+  seaKey.appendChild(successfulAttack);
+  return seaKey;
+}
+
+function opponentsResult() {
+  let opponentsResultModal = document.createElement("section");
+  opponentsResultModal.classList.add("opponents-result");
+  let opponentsHeader = document.createElement("h2");
+  opponentsHeader.textContent = "Opponents last move result:";
+  opponentsResultModal.appendChild(opponentsHeader);
+  let opponentsMove = document.createElement("p");
+  opponentsMove.classList.add("opponents-move");
+  opponentsResultModal.appendChild(opponentsMove);
+  return opponentsResultModal;
+}
+
+//testing opponentsResult
+// body.appendChild(opponentsResult());
+
+function updateOpponentsResult() {
+  if (!lastMove) {
+    document.querySelector(".opponents-move").textContent = "No move made";
+  } else {
+    document.querySelector(".opponents-move").textContent = `${lastMove}`;
+  }
+}
+//test call to updateOpponentsResult function
+// updateOpponentsResult();
+
+//
 //function placeShips() {
 //a system to allow players to place their ships
 
@@ -430,3 +492,10 @@ function buildSeaBoard(player) {
 //player two then place ships, IF THERE'S A PLAYER TWO
 //if(gameState.players[1].type==='human')
 //}
+
+//
+//
+//
+//
+//
+//when creating listeners on attack board, remember that the same classes are on spans in the seaKey, so target only those elements in that seaBoard element
