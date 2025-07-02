@@ -30,8 +30,6 @@ let gameState = false;
 //variables for storing gameboards to
 let defenseBoard;
 let attackBoard;
-let playerOneFinalBoard;
-let playerTwoFinalBoard;
 
 //initiate newGameModal at load / on refresh
 newGameShowHide();
@@ -133,6 +131,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           5
         );
       }
@@ -145,6 +144,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           4
         );
       }
@@ -157,6 +157,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           3
         );
       }
@@ -169,6 +170,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           3
         );
       }
@@ -181,6 +183,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           2
         );
       }
@@ -198,6 +201,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           5
         );
       }
@@ -210,6 +214,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           4
         );
       }
@@ -222,6 +227,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           3
         );
       }
@@ -234,6 +240,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           3
         );
       }
@@ -246,6 +253,7 @@ function newGameModal() {
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
+          // eslint-disable-next-line prettier/prettier
           2
         );
       }
@@ -281,12 +289,12 @@ function firstMoveModal() {
 
   //listener on playerOneAttackButton which builds an attacking screen for player 1; which invokes a function that builds a ui for player 1 to attack, and will be reusable whenever it's a players turn
   playerOneAttackButton.addEventListener("click", () => {
-    buildAttackScreen();
+    buildAttackModal();
     firstPlayerMoveModal.remove();
   });
 }
 
-function buildAttackScreen() {
+function buildAttackModal() {
   //we have playerOneSeaBoard and playerTwoSeaBoard already made at this point, which can be used for showing the attacker their own board
   let attackScreen = document.createElement("section");
   attackScreen.classList.add = "attack-screen";
@@ -327,7 +335,7 @@ function switchPlayerModal() {
   switchPlayerButton.addEventListener("click", () => {
     gameState.switchPlayers();
     switchPlayerModal.remove();
-    buildAttackScreen();
+    buildAttackModal();
   });
 }
 
@@ -363,6 +371,7 @@ function buildSeaBoard(player) {
         } else {
           return spot;
         }
+        // eslint-disable-next-line prettier/prettier
       })
     );
     let seaBoard = document.createElement("section");
