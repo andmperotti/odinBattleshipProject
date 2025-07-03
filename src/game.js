@@ -12,10 +12,9 @@ class Game {
   }
 
   switchPlayers() {
-    // eslint-disable-next-line no-unused-vars
-    let tempPlaceholder = this.attackingPlayer;
-    this.attackingPlayer = this.defendingPlayer;
-    this.defendingPlayer = this.tempPlaceholder;
+    this.players = [this.players[1], this.players[0]];
+    this.attackingPlayer = this.players[0];
+    this.defendingPlayer = this.players[1];
   }
 }
 
@@ -29,6 +28,7 @@ body.appendChild(gameTitle);
 let gameState = false;
 let lastMove;
 let turnCount = 0;
+let isModalActive = false;
 
 //initiate newGameModal at load / on refresh
 newGameShowHide();
@@ -83,6 +83,7 @@ function newGameModal() {
   playerTwoTypeFieldset.appendChild(playerTwoTypeRadioHumanLabel);
   let playerTwoTypeRadioComputer = document.createElement("input");
   playerTwoTypeRadioComputer.type = "radio";
+  playerTwoTypeRadioComputer.value = "computer";
   playerTwoTypeRadioComputer.name = "type";
   playerTwoTypeRadioComputer.id = "player-two-computer";
   let playerTwoTypeRadioComputerLabel = document.createElement("label");
@@ -106,7 +107,10 @@ function newGameModal() {
     e.preventDefault();
     let playerOneName = document.querySelector("#player-one-name").value;
     let playerTwoName = document.querySelector("#player-two-name").value;
-    let playerTwoType = document.querySelector("#player-two-type").value;
+    let playerTwoType = document.querySelector(
+      // eslint-disable-next-line prettier/prettier
+      "#player-two-type input:checked"
+    ).value;
     gameState = new Game(playerOneName, playerTwoName, playerTwoType);
 
     //call function to hide startGameModal, followed by the function to clear that modals input values
@@ -347,6 +351,7 @@ function buildAttackModal() {
   attackModal.appendChild(attackerBoatsRemaining);
 
   let defenseBoatsRemaining = gameState.defendingPlayer.gameboard.boats.filter(
+    // eslint-disable-next-line prettier/prettier
     (boat) => boat.sunk !== true
   ).length;
   let defenderBoatsRemaining = document.createElement("h3");
@@ -354,22 +359,116 @@ function buildAttackModal() {
   defenderBoatsRemaining.textContent = `Opponents ships left: ${defenseBoatsRemaining}`;
   attackModal.appendChild(defenderBoatsRemaining);
 
-  //set listeners for attacks
-  //after a move is made save move result to lastMove
-  //increment turnCount
+  //variable to hold clicked attack location
+  let attackLocationArray;
 
-  //update opponents last move
+  //add function for sea spot listeners to invoke
+  function verifyAttack() {
+    isModalActive = true;
+    let verifyAttackModal = document.createElement("section");
+    verifyAttackModal.classList.add("verify-attack-modal");
+    let verifyAttackHeader = document.createElement("h2");
+    verifyAttackHeader.textContent = "Confirm Attack:";
+    verifyAttackModal.appendChild(verifyAttackHeader);
+    let verifyAttackExplanation = document.createElement("p");
+    verifyAttackExplanation.textContent = `Are you sure you want to hit thee highlighted sea spot?`;
+    verifyAttackModal.appendChild(verifyAttackExplanation);
+    let confirmAttackButton = document.createElement("button");
+    confirmAttackButton.textContent = "Confirm";
+    confirmAttackButton.type = "button";
+    verifyAttackModal.appendChild(confirmAttackButton);
+    let cancelAttackButton = document.createElement("button");
+    cancelAttackButton.textContent = "Cancel";
+    cancelAttackButton.type = "button";
+    verifyAttackModal.appendChild(cancelAttackButton);
+
+    confirmAttackButton.addEventListener("click", () => {
+      isModalActive = false;
+      //call receiveAttack on defender gameboard using the spots dataset attributes
+      gameState.defendingPlayer.gameboard.receiveAttack(
+        attackLocationArray[0],
+        // eslint-disable-next-line prettier/prettier
+        attackLocationArray[1]
+      );
+
+      //conditional to build result string, if spot attacked is now a - then miss, if + then hit, update lastMove here
+      if (
+        gameState.defendingPlayer.gameboard.sea[attackLocationArray[0]][
+          attackLocationArray[1]
+        ] === "-"
+      ) {
+        lastMove = "Attack was a miss";
+      } else if (
+        gameState.defendingPlayer.gameboard.sea[attackLocationArray[0]][
+          attackLocationArray[1]
+        ] === "+"
+      ) {
+        lastMove = `Attack hit a ship`;
+      }
+
+      verifyAttackModal.remove();
+
+      //call switch player if 2 humans playing otherwise have the computer attack and render new attackModal, maybe show a result modal in between, and a loading element, maybe even draw the modal, and display a loading message which dynamically turns in the result when the computer has finished attacking and then render the button for the player to move on to attack the computer
+      if (gameState.players[1].type === "human") {
+        turnCount++;
+        switchPlayer();
+      } else {
+        turnCount++;
+        attackModal.remove();
+        //computer attacks
+
+        //maybe show a temporary modal with a loading icon
+
+        computerAttack();
+
+        //maybe create a modal that tells the user what the computers turn resulted in, and use the result element in the attack modal as a reminder
+
+        buildAttackModal();
+      }
+    });
+
+    cancelAttackButton.addEventListener("click", () => {
+      isModalActive = false;
+      document
+        .querySelector(".prospective-attack-location")
+        .classList.remove("prospective-attack-location");
+      verifyAttackModal.remove();
+    });
+    return verifyAttackModal;
+  }
+  //set listeners for attacks
+  let attackSpots = document.querySelectorAll(".attack-sea-spot");
+  attackSpots.forEach((el) => {
+    if (el.textContent !== "-" && el.textContent !== "+") {
+      el.addEventListener("click", () => {
+        if (!isModalActive) {
+          //save location clicked
+          attackLocationArray = el.dataset.seaId.split(",");
+
+          //add highlighting class to sea spot
+          el.classList.add("prospective-attack-location");
+          body.appendChild(verifyAttack());
+        }
+      });
+    }
+  });
+
+  //render opponents last move string
   updateOpponentsResult();
 }
 
 //switch player modal function
-function switchPlayerModal() {
+function switchPlayer() {
+  isModalActive = true;
   let switchPlayerModal = document.createElement("div");
-  switchPlayerModal.style.display = "hidden";
   switchPlayerModal.id = "switch-player-modal";
   let contextSwitch = document.createElement("h2");
   contextSwitch.textContent = "Switch Player";
   switchPlayerModal.appendChild(contextSwitch);
+  updateOpponentsResult();
+  let resultText = document.createElement("p");
+  resultText.textContent = `${lastMove}`;
+  switchPlayerModal.appendChild(resultText);
   let switchPlayerButton = document.createElement("button");
   switchPlayerButton.type = "button";
   switchPlayerButton.textContent = "Switch";
@@ -382,8 +481,10 @@ function switchPlayerModal() {
 
   //event listener for switch player modal switch button, which initially will just hide the switch player modal, later will show the attacking players seaBoard
   switchPlayerButton.addEventListener("click", () => {
+    isModalActive = false;
     gameState.switchPlayers();
     switchPlayerModal.remove();
+    document.querySelector(".attack-modal").remove();
     buildAttackModal();
   });
 }
@@ -463,15 +564,12 @@ function buildSeaKey() {
   seaKey.classList.add("sea-key");
   let notAttackedDescription = document.createElement("p");
   notAttackedDescription.innerHTML += `<span class="not-attacked sea-spot"> </span> === non attacked spot`;
-  notAttackedDescription.style.color = "blue";
   seaKey.appendChild(notAttackedDescription);
   let missedAttackDescription = document.createElement("p");
-  missedAttackDescription.innerHTML += `<span class="sea-spot unsuccessful-attack">-</span> === attack missed`;
-  missedAttackDescription.style.color = "yellow";
+  missedAttackDescription.innerHTML += `<span class="unsuccessful-attack sea-spot">-</span> === attack missed`;
   seaKey.appendChild(missedAttackDescription);
   let successfulAttack = document.createElement("p");
   successfulAttack.innerHTML += `<span class="successful-attack sea-spot">+</span> === attack hit`;
-  successfulAttack.style.color = "green";
   seaKey.appendChild(successfulAttack);
   return seaKey;
 }
@@ -494,6 +592,52 @@ function updateOpponentsResult() {
   } else {
     document.querySelector(".opponents-move").textContent = `${lastMove}`;
   }
+}
+
+let nextBiggestComputerTarget = 5;
+async function computerAttack() {
+  //create modal that tells the human player the computer is attacking
+  //the attacking message changes to result when computer is finished...
+  //so i'd think the we use an async  function that changes the message when the attack is complete
+  let computerAttackingModal = document.createElement("section");
+  computerAttackingModal.classList.add("computer-attacking-modal");
+  let computerAttackingModalHeader = document.createElement("h2");
+  computerAttackingModalHeader.textContent = "Computers Turn";
+  computerAttackingModal.appendChild(computerAttackingModalHeader);
+  let computerAttackingModalText = document.createElement("p");
+  computerAttackingModalText.textContent = "Attacking";
+  computerAttackingModalText.classList.add("computer-attacking-modal-text");
+  //maybe use an animation to add .'s after attacking
+  computerAttackingModal.appendChild(computerAttackingModalText);
+
+  //remember to have the computer look at where it hit an attack and try to make an educated guess where to attack now
+  //maybe some kind of shortest path algo?
+  //
+  //moving on with just making my own algo:
+  //
+  //if no previous attacks made, randomly attack
+  //else if a previous attack was a hit try any neighboring spot that hasn't been attempted
+  //      if any pattern shows up, like vertical or horizontal, keep attacking until a miss or 5 hits in a row have been recorded because 5 is the biggest ship, unless of course the biggest ship is already sunk then adjust to next biggest ship... so create a variable nextBiggest which starts at 5 until the biggest is sunk, probably a better way to do it but yeah.
+  //    not sure how to program it to tell it if hitting verticals keep attacking verticals, else horizontals
+  // let attackingSea = gameState.players[0].gameboard.sea;
+  // console.log(attackingSea);
+  //
+  //
+  //
+  //update lastMove with computers attack
+  async function calculatedComputerAttack() {
+    let attackingSea = await gameState.players[0].gameboard.sea.map((row) =>
+      row.map((spot) => {
+        if (typeof spot === "number") {
+          return " ";
+        } else {
+          return spot;
+        }
+      })
+    );
+    console.log(attackingSea);
+  }
+  calculatedComputerAttack();
 }
 
 //
