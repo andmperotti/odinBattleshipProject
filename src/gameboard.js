@@ -78,6 +78,7 @@ export class Gameboard {
       this._addShip(y, x, orientation, length);
     } else {
       console.log("location occupied");
+      //this is going to be output when program auto places ships randomly
     }
   }
 
