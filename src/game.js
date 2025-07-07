@@ -27,7 +27,7 @@ body.appendChild(gameTitle);
 //create variable to keep track of game in progress
 let gameState = false;
 let lastMove;
-let turnCount = 0;
+let turnCount = 1;
 let isModalActive = false;
 
 //initiate newGameModal at load / on refresh
@@ -298,7 +298,7 @@ function firstMoveModal() {
 }
 
 function buildAttackModal() {
-  //variables for storing gameboards to
+  //variables for storing game boards to
   let defenseBoard;
   let attackBoard;
 
@@ -382,7 +382,8 @@ function buildAttackModal() {
     cancelAttackButton.type = "button";
     verifyAttackModal.appendChild(cancelAttackButton);
 
-    confirmAttackButton.addEventListener("click", () => {
+    //async listener function as computer attacks is await'ed
+    confirmAttackButton.addEventListener("click", async () => {
       isModalActive = false;
       //call receiveAttack on defender gameboard using the spots dataset attributes
       gameState.defendingPlayer.gameboard.receiveAttack(
@@ -397,13 +398,13 @@ function buildAttackModal() {
           attackLocationArray[1]
         ] === "-"
       ) {
-        lastMove = "Attack was a miss";
+        lastMove = `Attack was a miss at ${attackLocationArray[0]},${attackLocationArray[1]}`;
       } else if (
         gameState.defendingPlayer.gameboard.sea[attackLocationArray[0]][
           attackLocationArray[1]
         ] === "+"
       ) {
-        lastMove = `Attack hit a ship`;
+        lastMove = `Attack hit a ship at ${attackLocationArray[0]},${attackLocationArray[1]}`;
       }
 
       verifyAttackModal.remove();
@@ -415,14 +416,9 @@ function buildAttackModal() {
       } else {
         turnCount++;
         attackModal.remove();
-        //computer attacks
 
-        //maybe show a temporary modal with a loading icon
-
-        computerAttack();
-
-        //maybe create a modal that tells the user what the computers turn resulted in, and use the result element in the attack modal as a reminder
-
+        //computer attacks, needs to be awaited... not sure how in a conditional block
+        await computerAttack();
         buildAttackModal();
       }
     });
@@ -594,11 +590,10 @@ function updateOpponentsResult() {
   }
 }
 
-let nextBiggestComputerTarget = 5;
 async function computerAttack() {
   //create modal that tells the human player the computer is attacking
-  //the attacking message changes to result when computer is finished...
-  //so i'd think the we use an async  function that changes the message when the attack is complete
+  isModalActive = true;
+
   let computerAttackingModal = document.createElement("section");
   computerAttackingModal.classList.add("computer-attacking-modal");
   let computerAttackingModalHeader = document.createElement("h2");
@@ -606,77 +601,64 @@ async function computerAttack() {
   computerAttackingModal.appendChild(computerAttackingModalHeader);
   let computerAttackingModalText = document.createElement("p");
   computerAttackingModalText.textContent = "Attacking";
-  computerAttackingModalText.classList.add("computer-attacking-modal-text");
-  //maybe use an animation to add .'s after attacking
   computerAttackingModal.appendChild(computerAttackingModalText);
+  let userVerifyComputerAttack = document.createElement("button");
+  userVerifyComputerAttack.type = "button";
+  userVerifyComputerAttack.textContent = "Advance to turn";
+  userVerifyComputerAttack.classList.add("confirm-computer-result");
+  computerAttackingModal.appendChild(userVerifyComputerAttack);
+  body.appendChild(computerAttackingModal);
 
   //remember to have the computer look at where it hit an attack and try to make an educated guess where to attack now
-  //maybe some kind of shortest path algo?
-  //
-  //moving on with just making my own algo:
-  //
-  //if no previous attacks made, randomly attack
-  //else if a previous attack was a hit try any neighboring spot that hasn't been attempted
-  //      if any pattern shows up, like vertical or horizontal, keep attacking until a miss or 5 hits in a row have been recorded because 5 is the biggest ship, unless of course the biggest ship is already sunk then adjust to next biggest ship... so create a variable nextBiggest which starts at 5 until the biggest is sunk, probably a better way to do it but yeah.
-  //    not sure how to program it to tell it if hitting verticals keep attacking verticals, else horizontals
-  // let attackingSea = gameState.players[0].gameboard.sea;
-  // console.log(attackingSea);
-  //
-  //
-  //
-  //update lastMove with computers attack
-  async function calculatedComputerAttack() {
-    let attackingSea = await gameState.players[0].gameboard.sea.map((row) =>
-      row.map((spot) => {
-        if (typeof spot === "number") {
-          return " ";
-        } else {
-          return spot;
-        }
-      })
-    );
-    console.log(attackingSea);
-  }
-  calculatedComputerAttack();
+  //heightened predictive attack, not finished
+  // await calculatedComputerAttack();
+
+  //random computer attacks
+  await computerRandomlyAttacks();
+  //random until hit, then attack adjacent sea spots around hits, then repeats:
+  computerAttackingModalText.textContent = `${lastMove}`;
+
+  userVerifyComputerAttack.addEventListener("click", () => {
+    computerAttackingModal.remove();
+    isModalActive = false;
+  });
 }
 
-//
-//function placeShips() {
-//a system to allow players to place their ships
+//function for computer to randomly attack board
+async function computerRandomlyAttacks() {
+  //filter opponents sea board
+  let attackingSea = await gameState.players[0].gameboard.sea.map((row) =>
+    row.map((spot) => {
+      if (typeof spot === "number") {
+        return " ";
+      } else {
+        return spot;
+      }
+    })
+  );
+  //variable that lets us recall if the computer has made an attack
+  let computerAttacked = false;
 
-//render empty sea boards so users can place ships
-//orientation buttons
-//
-// let placeShips = document.createElement("section");
-// placeShips.id = "place-ships";
-// let placeShipsHeader = document.createElement("h2");
-// placeShipsHeader.textContent = "Place Ships";
-// placeShips.appendChild(placeShipsHeader);
-// body.appendChild(placeShips);
-// let playerIdentifier = document.createElement("span");
-// playerIdentifier.textContent = `Player: ${gameState.players[0].name}`;
-// playerIdentifier.className = "player-identifier";
-// placeShips.appendChild(playerIdentifier);
-// placeShips.appendChild(playerOneSeaBoard);
-//player one place ships
-//modal that shows players sea board
-//some kind of input for creating a ship of some size
-//after which you can place the ship
-//confirmation box after each placed?
-//maybe allow for deleting of ships if they change their mind
-//final confirmation of all placements
-//
-//
-//player two then place ships, IF THERE'S A PLAYER TWO
-//if(gameState.players[1].type==='human')
-//}
-
-//
-//
-//
-//
-//
-//when creating listeners on attack board, remember that the same classes are on spans in the seaKey, so target only those elements in that seaBoard element
-
-//
-//on the event listeners for attacking, maybe add a class to the span clicked with some kind of styling that makes it stick out, pop up a modal that verfies their selection with a yes and no button
+  //randomly select a location on the opponents sea board
+  //if it has not been attacked, attack it, and change computerAttacked to true
+  while (!computerAttacked) {
+    let randomY = Math.floor(Math.random() * 10);
+    let randomX = Math.floor(Math.random() * 10);
+    if (
+      //if seaspot does not contain a hit or miss then attack that sea spot
+      attackingSea[randomY][randomX] !== "-" ||
+      attackingSea[randomY][randomX] !== "+"
+    ) {
+      await gameState.players[0].gameboard.receiveAttack(randomY, randomX);
+      if (gameState.players[0].gameboard.sea[randomY][randomX] === "-") {
+        //if the attack resulted in a miss, then save that to lastMove
+        lastMove = `Computer's attack was a miss at ${randomY},${randomX}`;
+      } else if (gameState.players[0].gameboard.sea[randomY][randomX] === "+") {
+        //if the attack resulted in hitting a ship then save that to lastMove
+        lastMove = `Computer's attack hit a ship at ${randomY},${randomX}`;
+      }
+      computerAttacked = true;
+      console.log(`computer attacked at ${randomY},${randomX}`);
+    }
+  }
+}
