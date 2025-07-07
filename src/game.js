@@ -25,6 +25,7 @@ let gameTitle = document.createElement("h1");
 gameTitle.textContent = "Battleship";
 body.appendChild(gameTitle);
 //create variable to keep track of game in progress
+let gameInstance = false;
 let gameState = false;
 let lastMove;
 let turnCount = 1;
@@ -105,13 +106,14 @@ function newGameModal() {
   //listener on form that sends input values to variables and technically starts game
   startGameInputs.addEventListener("submit", (e) => {
     e.preventDefault();
+    gameState = true;
     let playerOneName = document.querySelector("#player-one-name").value;
     let playerTwoName = document.querySelector("#player-two-name").value;
     let playerTwoType = document.querySelector(
       // eslint-disable-next-line prettier/prettier
       "#player-two-type input:checked"
     ).value;
-    gameState = new Game(playerOneName, playerTwoName, playerTwoType);
+    gameInstance = new Game(playerOneName, playerTwoName, playerTwoType);
 
     //call function to hide startGameModal, followed by the function to clear that modals input values
     startGameModal.remove();
@@ -123,14 +125,15 @@ function newGameModal() {
     //5 ships: carrier of 5 length, battleship of 4 length, destroyer of 3 length, submarine of 3 length, patrol boat of 2 length
     //try to assign each randomly
     //while loop which runs until 5 boats have been added to a players boats array:
-    while (gameState.players[0].gameboard.boats.length < 4) {
+    while (gameInstance.players[0].gameboard.boats.length < 4) {
       let orientations = ["up", "down", "left", "right"];
       //place a carrier (5 length) while there isn't one
       while (
-        gameState.players[0].gameboard.boats.filter((boat) => boat.length === 5)
-          .length < 1
+        gameInstance.players[0].gameboard.boats.filter(
+          (boat) => boat.length === 5
+        ).length < 1
       ) {
-        gameState.players[0].gameboard.placeShip(
+        gameInstance.players[0].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -140,10 +143,11 @@ function newGameModal() {
       }
       //place a battleship (4 length) while there isn't one
       while (
-        gameState.players[0].gameboard.boats.filter((boat) => boat.length === 4)
-          .length < 1
+        gameInstance.players[0].gameboard.boats.filter(
+          (boat) => boat.length === 4
+        ).length < 1
       ) {
-        gameState.players[0].gameboard.placeShip(
+        gameInstance.players[0].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -151,25 +155,14 @@ function newGameModal() {
           4
         );
       }
-      //place a destroyer (3 length) while there isn't one
+
+      //place a submarine and a destroyer (3 length) while there aren't one of each
       while (
-        gameState.players[0].gameboard.boats.filter((boat) => boat.length === 3)
-          .length < 1
+        gameInstance.players[0].gameboard.boats.filter(
+          (boat) => boat.length === 3
+        ).length < 2
       ) {
-        gameState.players[0].gameboard.placeShip(
-          Math.floor(Math.random() * 10),
-          Math.floor(Math.random() * 10),
-          orientations[Math.floor(Math.random() * 4)],
-          // eslint-disable-next-line prettier/prettier
-          3
-        );
-      }
-      //place a submarine (3 length) while there isn't one
-      while (
-        gameState.players[0].gameboard.boats.filter((boat) => boat.length === 3)
-          .length < 2
-      ) {
-        gameState.players[0].gameboard.placeShip(
+        gameInstance.players[0].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -179,10 +172,11 @@ function newGameModal() {
       }
       //place a patrol boat (2 length) while there isn't one
       while (
-        gameState.players[0].gameboard.boats.filter((boat) => boat.length === 2)
-          .length < 1
+        gameInstance.players[0].gameboard.boats.filter(
+          (boat) => boat.length === 2
+        ).length < 1
       ) {
-        gameState.players[0].gameboard.placeShip(
+        gameInstance.players[0].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -193,14 +187,15 @@ function newGameModal() {
     }
 
     //repeat for player 2
-    while (gameState.players[1].gameboard.boats.length < 4) {
+    while (gameInstance.players[1].gameboard.boats.length < 4) {
       let orientations = ["up", "down", "left", "right"];
       //place a carrier (5 length) while there isn't one
       while (
-        gameState.players[1].gameboard.boats.filter((boat) => boat.length === 5)
-          .length < 1
+        gameInstance.players[1].gameboard.boats.filter(
+          (boat) => boat.length === 5
+        ).length < 1
       ) {
-        gameState.players[1].gameboard.placeShip(
+        gameInstance.players[1].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -210,10 +205,11 @@ function newGameModal() {
       }
       //place a battleship (4 length) while there isn't one
       while (
-        gameState.players[1].gameboard.boats.filter((boat) => boat.length === 4)
-          .length < 1
+        gameInstance.players[1].gameboard.boats.filter(
+          (boat) => boat.length === 4
+        ).length < 1
       ) {
-        gameState.players[1].gameboard.placeShip(
+        gameInstance.players[1].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -223,10 +219,11 @@ function newGameModal() {
       }
       //place a destroyer (3 length) while there isn't one
       while (
-        gameState.players[1].gameboard.boats.filter((boat) => boat.length === 3)
-          .length < 1
+        gameInstance.players[1].gameboard.boats.filter(
+          (boat) => boat.length === 3
+        ).length < 1
       ) {
-        gameState.players[1].gameboard.placeShip(
+        gameInstance.players[1].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -236,10 +233,11 @@ function newGameModal() {
       }
       //place a submarine (3 length) while there isn't one
       while (
-        gameState.players[1].gameboard.boats.filter((boat) => boat.length === 3)
-          .length < 2
+        gameInstance.players[1].gameboard.boats.filter(
+          (boat) => boat.length === 3
+        ).length < 2
       ) {
-        gameState.players[1].gameboard.placeShip(
+        gameInstance.players[1].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -249,10 +247,11 @@ function newGameModal() {
       }
       //place a patrol boat (2 length) while there isn't one
       while (
-        gameState.players[1].gameboard.boats.filter((boat) => boat.length === 2)
-          .length < 1
+        gameInstance.players[1].gameboard.boats.filter(
+          (boat) => boat.length === 2
+        ).length < 1
       ) {
-        gameState.players[1].gameboard.placeShip(
+        gameInstance.players[1].gameboard.placeShip(
           Math.floor(Math.random() * 10),
           Math.floor(Math.random() * 10),
           orientations[Math.floor(Math.random() * 4)],
@@ -265,9 +264,9 @@ function newGameModal() {
     firstMoveModal();
   });
 }
-//display game start modal when there is not a current game running. At load there is no gameState therefore the startGameModal shows
+//display game start modal when there is not a current game running. At load there is no gameInstance therefore the startGameModal shows
 function newGameShowHide() {
-  if (!gameState) {
+  if (!gameInstance) {
     newGameModal();
   }
 }
@@ -281,7 +280,7 @@ function firstMoveModal() {
   firstPlayerMoveModal.style.display = "hidden";
   firstPlayerMoveModal.id = "first-player-modal";
   let contextSwitch = document.createElement("h2");
-  contextSwitch.textContent = `Give the computer to: ${gameState.attackingPlayer.name}`;
+  contextSwitch.textContent = `Give the computer to: ${gameInstance.attackingPlayer.name}`;
   firstPlayerMoveModal.appendChild(contextSwitch);
   let playerOneAttackButton = document.createElement("button");
   playerOneAttackButton.type = "button";
@@ -308,11 +307,11 @@ function buildAttackModal() {
 
   body.appendChild(attackModal);
   let attackHeader = document.createElement("h2");
-  attackHeader.textContent = `Player ${gameState.attackingPlayer.name}'s Attack Screen:`;
+  attackHeader.textContent = `Player ${gameInstance.attackingPlayer.name}'s Attack Screen:`;
   attackHeader.classList.add("attack-header");
   attackModal.appendChild(attackHeader);
   //show opponents sea, convert elements to display things other than numbers: blue background with a space or underscore for a not attacked sea-spot, yellow background with a '-' for a miss, and green background color with a '+' for a hit.
-  attackBoard = buildSeaBoard(gameState.defendingPlayer);
+  attackBoard = buildSeaBoard(gameInstance.defendingPlayer);
   let attackBoardHolder = document.createElement("section");
   attackBoardHolder.appendChild(attackBoard);
   attackBoardHolder.classList.add("attack-board-holder");
@@ -322,9 +321,9 @@ function buildAttackModal() {
 
   let defendingHeader = document.createElement("h2");
   defendingHeader.classList.add("defending-header");
-  defendingHeader.textContent = `Player ${gameState.attackingPlayer.name}'s Defense Screen:`;
+  defendingHeader.textContent = `Player ${gameInstance.attackingPlayer.name}'s Defense Screen:`;
   attackModal.appendChild(defendingHeader);
-  defenseBoard = buildSeaBoard(gameState.attackingPlayer);
+  defenseBoard = buildSeaBoard(gameInstance.attackingPlayer);
   let defenseBoardHolder = document.createElement("section");
   defenseBoardHolder.classList.add("defense-board-holder");
   defenseBoardHolder.appendChild(defenseBoard);
@@ -343,17 +342,18 @@ function buildAttackModal() {
 
   let attackerBoatsRemaining = document.createElement("h3");
   attackerBoatsRemaining.classList.add("attacker-boats-remaining");
-  let attackerBoatCount = gameState.attackingPlayer.gameboard.boats.filter(
+  let attackerBoatCount = gameInstance.attackingPlayer.gameboard.boats.filter(
     // eslint-disable-next-line prettier/prettier
     (boat) => boat.sunk !== true
   ).length;
   attackerBoatsRemaining.textContent = `Your Ships left: ${attackerBoatCount} `;
   attackModal.appendChild(attackerBoatsRemaining);
 
-  let defenseBoatsRemaining = gameState.defendingPlayer.gameboard.boats.filter(
-    // eslint-disable-next-line prettier/prettier
-    (boat) => boat.sunk !== true
-  ).length;
+  let defenseBoatsRemaining =
+    gameInstance.defendingPlayer.gameboard.boats.filter(
+      // eslint-disable-next-line prettier/prettier
+      (boat) => boat.sunk !== true
+    ).length;
   let defenderBoatsRemaining = document.createElement("h3");
   defenderBoatsRemaining.classList.add("defender-boats-remaining");
   defenderBoatsRemaining.textContent = `Opponents ships left: ${defenseBoatsRemaining}`;
@@ -386,7 +386,7 @@ function buildAttackModal() {
     confirmAttackButton.addEventListener("click", async () => {
       isModalActive = false;
       //call receiveAttack on defender gameboard using the spots dataset attributes
-      gameState.defendingPlayer.gameboard.receiveAttack(
+      gameInstance.defendingPlayer.gameboard.receiveAttack(
         attackLocationArray[0],
         // eslint-disable-next-line prettier/prettier
         attackLocationArray[1]
@@ -394,13 +394,13 @@ function buildAttackModal() {
 
       //conditional to build result string, if spot attacked is now a - then miss, if + then hit, update lastMove here
       if (
-        gameState.defendingPlayer.gameboard.sea[attackLocationArray[0]][
+        gameInstance.defendingPlayer.gameboard.sea[attackLocationArray[0]][
           attackLocationArray[1]
         ] === "-"
       ) {
         lastMove = `Attack was a miss at ${attackLocationArray[0]},${attackLocationArray[1]}`;
       } else if (
-        gameState.defendingPlayer.gameboard.sea[attackLocationArray[0]][
+        gameInstance.defendingPlayer.gameboard.sea[attackLocationArray[0]][
           attackLocationArray[1]
         ] === "+"
       ) {
@@ -410,7 +410,8 @@ function buildAttackModal() {
       verifyAttackModal.remove();
 
       //call switch player if 2 humans playing otherwise have the computer attack and render new attackModal, maybe show a result modal in between, and a loading element, maybe even draw the modal, and display a loading message which dynamically turns in the result when the computer has finished attacking and then render the button for the player to move on to attack the computer
-      if (gameState.players[1].type === "human") {
+      if (gameInstance.players[1].type === "human") {
+        gameEndCheck();
         turnCount++;
         switchPlayer();
       } else {
@@ -472,13 +473,13 @@ function switchPlayer() {
   body.appendChild(switchPlayerModal);
   switchPlayerModal.style.display = "grid";
   let switchPlayerNotice = document.createElement("p");
-  switchPlayerNotice.textContent = `Please give the computer to: ${gameState.attackingPlayer.name}`;
+  switchPlayerNotice.textContent = `Please give the computer to: ${gameInstance.attackingPlayer.name}`;
   switchPlayerModal.appendChild(switchPlayerNotice);
 
   //event listener for switch player modal switch button, which initially will just hide the switch player modal, later will show the attacking players seaBoard
   switchPlayerButton.addEventListener("click", () => {
     isModalActive = false;
-    gameState.switchPlayers();
+    gameInstance.switchPlayers();
     switchPlayerModal.remove();
     document.querySelector(".attack-modal").remove();
     buildAttackModal();
@@ -489,7 +490,7 @@ function buildSeaBoard(player) {
   //what if we build a modal for each player that had their sea board to show their opponents moves on their board, and a board with their attacks results displayed, and each time we switch player the modal shown switches, and of course listeners will be on different elements
 
   //build board for showing attacking players own sea
-  if (player.name === gameState.attackingPlayer.name) {
+  if (player === gameInstance.attackingPlayer) {
     let seaBoard = document.createElement("section");
     seaBoard.className = "defense-sea-board";
     //build rows of seaBoard, i is the y axis
@@ -513,7 +514,7 @@ function buildSeaBoard(player) {
     }
     return seaBoard;
     //build board for showing attack sea, aka converted defenders sea board
-  } else if (player.name === gameState.defendingPlayer.name) {
+  } else if (player === gameInstance.defendingPlayer) {
     let convertedSea = player.gameboard.sea.map((row) =>
       row.map((spot) => {
         if (typeof spot === "number") {
@@ -622,12 +623,13 @@ async function computerAttack() {
     computerAttackingModal.remove();
     isModalActive = false;
   });
+  gameEndCheck();
 }
 
 //function for computer to randomly attack board
 async function computerRandomlyAttacks() {
   //filter opponents sea board
-  let attackingSea = await gameState.players[0].gameboard.sea.map((row) =>
+  let attackingSea = await gameInstance.players[0].gameboard.sea.map((row) =>
     row.map((spot) => {
       if (typeof spot === "number") {
         return " ";
@@ -649,16 +651,39 @@ async function computerRandomlyAttacks() {
       attackingSea[randomY][randomX] !== "-" ||
       attackingSea[randomY][randomX] !== "+"
     ) {
-      await gameState.players[0].gameboard.receiveAttack(randomY, randomX);
-      if (gameState.players[0].gameboard.sea[randomY][randomX] === "-") {
+      await gameInstance.players[0].gameboard.receiveAttack(randomY, randomX);
+      if (gameInstance.players[0].gameboard.sea[randomY][randomX] === "-") {
         //if the attack resulted in a miss, then save that to lastMove
         lastMove = `Computer's attack was a miss at ${randomY},${randomX}`;
-      } else if (gameState.players[0].gameboard.sea[randomY][randomX] === "+") {
+      } else if (
+        gameInstance.players[0].gameboard.sea[randomY][randomX] === "+"
+      ) {
         //if the attack resulted in hitting a ship then save that to lastMove
         lastMove = `Computer's attack hit a ship at ${randomY},${randomX}`;
       }
       computerAttacked = true;
       console.log(`computer attacked at ${randomY},${randomX}`);
     }
+  }
+}
+
+function gameEndCheck() {
+  //if either player has no boats remaining, remove all modals and generate winnerBoard
+
+  //for now just console.log the winner and work on removing assets not needed
+  if (
+    gameInstance.players[0].gameboard.boats.filter((boat) => !boat.sunk)
+      .length === 0
+  ) {
+    gameState = false;
+    //game over player 2 wins
+    console.log("game over player 2 wins");
+  } else if (
+    gameInstance.players[1].gameboard.boats.filter((boat) => !boat.sunk)
+      .length === 0
+  ) {
+    gameState = false;
+    //game over player 1 wins
+    console.log("game over player 1 wins");
   }
 }
