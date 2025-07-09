@@ -221,20 +221,6 @@ function newGameModal() {
       while (
         gameInstance.players[1].gameboard.boats.filter(
           (boat) => boat.length === 3
-        ).length < 1
-      ) {
-        gameInstance.players[1].gameboard.placeShip(
-          Math.floor(Math.random() * 10),
-          Math.floor(Math.random() * 10),
-          orientations[Math.floor(Math.random() * 4)],
-          // eslint-disable-next-line prettier/prettier
-          3
-        );
-      }
-      //place a submarine (3 length) while there isn't one
-      while (
-        gameInstance.players[1].gameboard.boats.filter(
-          (boat) => boat.length === 3
         ).length < 2
       ) {
         gameInstance.players[1].gameboard.placeShip(
@@ -398,13 +384,13 @@ function buildAttackModal() {
           attackLocationArray[1]
         ] === "-"
       ) {
-        lastMove = `Attack was a miss at ${attackLocationArray[0]},${attackLocationArray[1]}`;
+        lastMove = `${gameInstance.attackingPlayer.name}'s attack was a miss at ${attackLocationArray[0]},${attackLocationArray[1]}`;
       } else if (
         gameInstance.defendingPlayer.gameboard.sea[attackLocationArray[0]][
           attackLocationArray[1]
         ] === "+"
       ) {
-        lastMove = `Attack hit a ship at ${attackLocationArray[0]},${attackLocationArray[1]}`;
+        lastMove = `${gameInstance.attackingPlayer.name}'s attack hit a ship at ${attackLocationArray[0]},${attackLocationArray[1]}`;
       }
 
       verifyAttackModal.remove();
@@ -412,15 +398,25 @@ function buildAttackModal() {
       //call switch player if 2 humans playing otherwise have the computer attack and render new attackModal, maybe show a result modal in between, and a loading element, maybe even draw the modal, and display a loading message which dynamically turns in the result when the computer has finished attacking and then render the button for the player to move on to attack the computer
       if (gameInstance.players[1].type === "human") {
         gameEndCheck();
-        turnCount++;
-        switchPlayer();
+        if (gameState) {
+          turnCount++;
+          switchPlayer();
+        } else {
+          attackModal.remove();
+        }
+        //else player2 is computer
       } else {
-        turnCount++;
-        attackModal.remove();
-
-        //computer attacks, needs to be awaited... not sure how in a conditional block
-        await computerAttack();
-        buildAttackModal();
+        gameEndCheck();
+        if (gameState) {
+          turnCount++;
+          attackModal.remove();
+          //computer attacks, unless game is over
+          await computerAttack();
+          gameEndCheck();
+          buildAttackModal();
+        } else {
+          attackModal.remove();
+        }
       }
     });
 
@@ -473,7 +469,7 @@ function switchPlayer() {
   body.appendChild(switchPlayerModal);
   switchPlayerModal.style.display = "grid";
   let switchPlayerNotice = document.createElement("p");
-  switchPlayerNotice.textContent = `Please give the computer to: ${gameInstance.attackingPlayer.name}`;
+  switchPlayerNotice.textContent = `Please give the computer to: ${gameInstance.defendingPlayer.name}`;
   switchPlayerModal.appendChild(switchPlayerNotice);
 
   //event listener for switch player modal switch button, which initially will just hide the switch player modal, later will show the attacking players seaBoard
@@ -585,7 +581,7 @@ function opponentsResult() {
 
 function updateOpponentsResult() {
   if (!lastMove) {
-    document.querySelector(".opponents-move").textContent = "No move made";
+    document.querySelector(".opponents-move").textContent = "No moves yet";
   } else {
     document.querySelector(".opponents-move").textContent = `${lastMove}`;
   }
@@ -623,7 +619,6 @@ async function computerAttack() {
     computerAttackingModal.remove();
     isModalActive = false;
   });
-  gameEndCheck();
 }
 
 //function for computer to randomly attack board
@@ -677,13 +672,98 @@ function gameEndCheck() {
   ) {
     gameState = false;
     //game over player 2 wins
-    console.log("game over player 2 wins");
+    gameOver(gameInstance.players[0], gameInstance.players[1]);
   } else if (
     gameInstance.players[1].gameboard.boats.filter((boat) => !boat.sunk)
       .length === 0
   ) {
     gameState = false;
     //game over player 1 wins
-    console.log("game over player 1 wins");
+    gameOver(gameInstance.players[1], gameInstance.players[0]);
   }
+}
+
+function gameOver(winner, loser) {
+  let winSummary = document.createElement("section");
+  let winSummaryHeader = document.createElement("h2");
+  winSummaryHeader.textContent = `${winner.name} has beaten ${loser.name}`;
+  winSummary.appendChild(winSummaryHeader);
+  let boardSummary = document.createElement("section");
+  let playerOneHeader = document.createElement("h3");
+  playerOneHeader.classList.add("player-one-summary-header");
+  playerOneHeader.textContent = `${gameInstance.players[0].name}'s board:`;
+  boardSummary.appendChild(playerOneHeader);
+  let playerTwoHeader = document.createElement("h3");
+  playerTwoHeader.classList.add("player-two-summary-header");
+  playerTwoHeader.textContent = `${gameInstance.players[1].name}'s board:`;
+  boardSummary.appendChild(playerTwoHeader);
+  let playerOneFinalBoard = buildFinalSeaBoard(gameInstance.players[0]);
+  winSummary.classList.add("win-summary");
+  boardSummary.appendChild(playerOneFinalBoard);
+
+  boardSummary.classList.add("board-summary");
+  winSummary.appendChild(boardSummary);
+  let finalTurnCount = document.createElement("h4");
+  finalTurnCount.textContent = `Turns: ${turnCount}`;
+  boardSummary.appendChild(finalTurnCount);
+  finalTurnCount.classList.add("final-turn-count");
+  let boardSummaryKey = buildSeaKey();
+  boardSummary.appendChild(boardSummaryKey);
+  let playerTwoFinalBoard = buildFinalSeaBoard(gameInstance.players[1]);
+  boardSummary.appendChild(playerTwoFinalBoard);
+  playerTwoFinalBoard.classList.add("attack-sea-board");
+  playerTwoFinalBoard.classList.remove("defense-sea-board");
+  winSummary.appendChild(boardSummary);
+
+  let newGameButton = document.createElement("button");
+  newGameButton.textContent = "Start New Game";
+  newGameButton.type = "button";
+  winSummary.appendChild(newGameButton);
+
+  newGameButton.addEventListener("click", () => {
+    winSummary.remove();
+    //wipe variables
+    gameInstance = false;
+    gameState = false;
+    lastMove;
+    turnCount = 1;
+    isModalActive = false;
+    //invoke newgame modal
+    newGameShowHide();
+  });
+
+  body.appendChild(winSummary);
+}
+
+function buildFinalSeaBoard(player) {
+  let seaBoard = document.createElement("section");
+  seaBoard.className = "defense-sea-board";
+  //build rows of seaBoard, i is the y axis
+  for (let i = 0; i < player.gameboard.sea.length; i++) {
+    let seaRow = document.createElement("section");
+    seaRow.className = "defense-sea-row";
+    seaRow.dataset.rowId = i;
+    seaBoard.appendChild(seaRow);
+    //build spans for each element in the row, j is the x axis
+    for (let j = 0; j < player.gameboard.sea[i].length; j++) {
+      let seaSpot = document.createElement("span");
+      seaSpot.className = "defense-sea-spot";
+      if (player.gameboard.sea[i][j] === 0) {
+        seaSpot.textContent = " ";
+        seaSpot.classList.add("not-attacked");
+      } else if (player.gameboard.sea[i][j] === "+") {
+        seaSpot.textContent = "+";
+        seaSpot.classList.add("successful-attack");
+      } else if (player.gameboard.sea[i][j] === "-") {
+        seaSpot.textContent = "-";
+        seaSpot.classList.add("unsuccessful-attack");
+        //else if the spot was never attacked and is occupied with a ship
+      } else {
+        seaSpot.textContent = player.gameboard.sea[i][j];
+        seaSpot.classList.add("not-attacked");
+      }
+      seaRow.appendChild(seaSpot);
+    }
+  }
+  return seaBoard;
 }
