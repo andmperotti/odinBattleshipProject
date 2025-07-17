@@ -56,7 +56,7 @@ test("not placing disallowed ships", () => {
   );
 });
 
-test(" attack miss", () => {
+test("attack miss", () => {
   let testSea = new Gameboard();
   testSea.receiveAttack(0, 0);
   expect(testSea.sea).toMatchObject([
