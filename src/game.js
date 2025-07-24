@@ -777,6 +777,7 @@ async function placeShips() {
     document.querySelector(".place-ships-ui").remove();
     //function to have computer place its ships randomly
     randomlyPlaceShips(gameInstance.players[1]);
+    lastMove = `Computer placed its ships`;
 
     buildAttackModal(); //does show up, just doesn't allow for attacks
   }
