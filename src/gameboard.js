@@ -51,6 +51,8 @@ export class Gameboard {
       this.vacancyChecker(y, x, orientation, length)
     ) {
       this._addShip(y, x, orientation, length, type);
+    } else {
+      return false;
     }
   }
 
@@ -91,16 +93,12 @@ export class Gameboard {
       } else if (orientation === "right") {
         currentX = x + i;
       }
-      //check if the prospective sea spot is occupied by the same boat beign placed, or any other boat
-      let currentBoatIndex = this._sea[currentY][currentX];
-      if (
-        this._sea[currentY][currentX] !== this._boats[currentBoatIndex] &&
-        this._sea[currentY][currentX] !== 0
-      ) {
+      //check if the prospective sea spot is occupied
+      if (this._sea[currentY][currentX] !== 0) {
         return false;
       }
     }
-    //finally return true if the above looop did not find occupied sea spots in the desired range
+    //finally return true if the above loop did not find occupied sea spots in the desired range
     return true;
   }
 
@@ -142,6 +140,7 @@ export class Gameboard {
       }
       counter++;
     }
+    return true;
   }
 
   boatsRemaining() {
