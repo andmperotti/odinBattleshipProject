@@ -80,7 +80,7 @@ export class Gameboard {
     //set up variables to represent each progressing sea spot's y and x coordinates
     let currentY = y;
     let currentX = x;
-    //iterate until a temp variable is equal to the length argument value, each iteration changing the y and x coordiante to correct next sea spot and checking if that sea spot is occupied by another ship or not.
+    //iterate until a temp variable is equal to the length argument value, each iteration changing the y and x coordinate to correct next sea spot and checking if that sea spot is occupied by another ship or not.
     for (let i = 0; i < length; i++) {
       if (orientation === "up") {
         currentY = y - i;
@@ -91,8 +91,12 @@ export class Gameboard {
       } else if (orientation === "right") {
         currentX = x + i;
       }
-      //check if the prospective sea spot is occupied
-      if (this._sea[currentY][currentX] !== 0) {
+      //check if the prospective sea spot is occupied by the same boat beign placed, or any other boat
+      let currentBoatIndex = this._sea[currentY][currentX];
+      if (
+        this._sea[currentY][currentX] !== this._boats[currentBoatIndex] &&
+        this._sea[currentY][currentX] !== 0
+      ) {
         return false;
       }
     }
@@ -201,12 +205,14 @@ export class Gameboard {
         }
         counter++;
       }
+      return true;
     } else {
       //boat cant be placed at new position
       //replace current boats with old boats
       this._boats = structuredClone(oldBoats);
       //revert sea
       this._sea = oldSea.slice();
+      return false;
     }
   }
 
