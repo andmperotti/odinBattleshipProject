@@ -123,12 +123,13 @@ test("set up game and a board, check if players can clear ships and therefore al
   ]);
 });
 
-test("placeShip and replaceShip on user sea", () => {
+test("replaceShip on user sea", () => {
   let testBoard = new Gameboard();
   testBoard.placeShip(0, 0, "right", 4, "battleship");
+  testBoard.replaceShip("battleship", 1, 0, "right");
   expect(testBoard.sea).toMatchObject([
-    [2, 2, 2, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 2, 2, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -138,12 +139,55 @@ test("placeShip and replaceShip on user sea", () => {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
-  testBoard.replaceShip("battleship", 1, 0, "right");
+});
+test("within sea range", () => {
+  let testBoard = new Gameboard();
+  expect(testBoard.withinSeaRange(0, 0, "down", 3)).toBe(true);
+  expect(testBoard.withinSeaRange(2, 0, "left", 2)).toBe(false);
+  testBoard.placeShip(0, 0, "down", 2, "patrol boat");
   expect(testBoard.sea).toMatchObject([
+    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [2, 2, 2, 2, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ]);
+  testBoard.placeShip(0, 0, "up", 2, "patrol boat");
+  expect(testBoard.sea).toMatchObject([
+    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [5, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ]);
+  expect(testBoard.withinSeaRange(-1, 0, "down", 3)).toBe(false);
+});
+
+test("vacancyChecker", () => {
+  let testBoard = new Gameboard();
+  expect(testBoard.vacancyChecker(0, 0, "right", 2)).toBe(true);
+});
+
+test("replaceShip on user sea, again", () => {
+  let testBoard = new Gameboard();
+  testBoard.placeShip(0, 0, "right", 4, "battleship");
+
+  testBoard.replaceShip("battleship", 0, 0, "down");
+  expect(testBoard.sea).toMatchObject([
+    [2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
