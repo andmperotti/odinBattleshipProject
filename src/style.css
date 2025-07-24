@@ -168,6 +168,7 @@ body{
     grid-column: 1;
     font-size: calc(.5rem + 1vw);
     background-color: red;
+    padding: 1ch;
 }
 
 .sea-key,
