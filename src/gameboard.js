@@ -40,8 +40,6 @@ export class Gameboard {
       this._boats[spotValue - 1].hit();
       this._sea[y][x] = "+";
       //hit
-    } else {
-      console.log("position already attacked, try again");
     }
     //later will have to add logic for ship to take damage, could instead of using just 0's and 1's, use any number > 0 to correspond to a specific boat
   }
@@ -49,73 +47,57 @@ export class Gameboard {
   placeShip(y, x, orientation, length, type) {
     //check for range of prospective ship length to make sure there is 1. room to fit the ship, and 2. no ship already in the prospective coordinates and length
     if (
-      orientation === "up" &&
-      this._withinSeaRange(y, x) &&
-      this._withinSeaRange(y - (length - 1), x) &&
-      this._vacancyChecker(y, x, orientation, length)
+      this.withinSeaRange(y, x, orientation, length) &&
+      this.vacancyChecker(y, x, orientation, length)
     ) {
       this._addShip(y, x, orientation, length, type);
-    } else if (
-      orientation === "down" &&
-      this._withinSeaRange(y, x) &&
-      this._withinSeaRange(y + (length - 1), x) &&
-      this._vacancyChecker(y, x, orientation, length)
-    ) {
-      this._addShip(y, x, orientation, length, type);
-    } else if (
-      orientation === "right" &&
-      this._withinSeaRange(y, x) &&
-      this._withinSeaRange(y, x + (length - 1)) &&
-      this._vacancyChecker(y, x, orientation, length)
-    ) {
-      this._addShip(y, x, orientation, length, type);
-    } else if (
-      orientation === "left" &&
-      this._withinSeaRange(y, x) &&
-      this._withinSeaRange(y, x - (length - 1)) &&
-      this._vacancyChecker(y, x, orientation, length)
-    ) {
-      this._addShip(y, x, orientation, length, type);
-    } else {
-      //return error message to be displayed on place ships screen under specific element related to error being created, and yes this isn't an error object
-      return "location occupied or out of range, or type of ship has been placed";
     }
   }
 
-  _withinSeaRange(y, x) {
-    if (y >= 0 && y <= 9 && x >= 0 && x <= 9) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  _vacancyChecker(y, x, orientation, length) {
-    let turn = 0;
-    let wantedSpots = Array.from({ length: length }, () => {
+  withinSeaRange(y, x, orientation, length) {
+    let counter = 0;
+    while (counter < length) {
+      let currentY = y;
+      let currentX = x;
       if (orientation === "up") {
-        let prospectiveSlot = this._sea[y - turn][x];
-        turn++;
-        return prospectiveSlot;
+        currentY = y - counter;
       } else if (orientation === "down") {
-        let prospectiveSlot = this._sea[y + turn][x];
-        turn++;
-        return prospectiveSlot;
-      } else if (orientation === "right") {
-        let prospectiveSlot = this._sea[y][x + turn];
-        turn++;
-        return prospectiveSlot;
+        currentY = y + counter;
       } else if (orientation === "left") {
-        let prospectiveSlot = this._sea[y][x - turn];
-        turn++;
-        return prospectiveSlot;
+        currentX = x - counter;
+      } else if (orientation === "right") {
+        currentX = x + counter;
       }
-    });
-    if (wantedSpots.every((spot) => spot === 0)) {
-      return true;
-    } else {
-      return false;
+      if (currentY < 0 || currentY > 9 || currentX < 0 || currentX > 9) {
+        return false;
+      }
+      counter++;
     }
+    return true;
+  }
+
+  vacancyChecker(y, x, orientation, length) {
+    //set up variables to represent each progressing sea spot's y and x coordinates
+    let currentY = y;
+    let currentX = x;
+    //iterate until a temp variable is equal to the length argument value, each iteration changing the y and x coordiante to correct next sea spot and checking if that sea spot is occupied by another ship or not.
+    for (let i = 0; i < length; i++) {
+      if (orientation === "up") {
+        currentY = y - i;
+      } else if (orientation === "down") {
+        currentY = y + i;
+      } else if (orientation === "left") {
+        currentX = x - i;
+      } else if (orientation === "right") {
+        currentX = x + i;
+      }
+      //check if the prospective sea spot is occupied
+      if (this._sea[currentY][currentX] !== 0) {
+        return false;
+      }
+    }
+    //finally return true if the above looop did not find occupied sea spots in the desired range
+    return true;
   }
 
   _addShip(y, x, orientation, length, type) {
@@ -139,25 +121,22 @@ export class Gameboard {
     }
     //variable to help us keep track of how many spots to take up for length of each ship
     let counter = 0;
-    //add to ship to sea ... in an incrementing fashion
+    //add ship to sea spots ... in an incrementing fashion, aka first of the length, then second, etc until the last is placed
     while (counter < length) {
       if (orientation === "up") {
         this._sea[y - counter][x] =
           this._boats.findIndex((boat) => boat.type === type) + 1;
-        counter++;
       } else if (orientation === "down") {
         this._sea[y + counter][x] =
           this._boats.findIndex((boat) => boat.type === type) + 1;
-        counter++;
       } else if (orientation === "left") {
         this._sea[y][x - counter] =
           this._boats.findIndex((boat) => boat.type === type) + 1;
-        counter++;
       } else if (orientation === "right") {
         this._sea[y][x + counter] =
           this._boats.findIndex((boat) => boat.type === type) + 1;
-        counter++;
       }
+      counter++;
     }
   }
 
@@ -202,9 +181,9 @@ export class Gameboard {
     );
 
     if (
-      //if boat passes vacancy checker of new position, and if it's within sea range...
-      this._vacancyChecker(newY, newX, newOrientation, length) &&
-      this._withinSeaRange(newY, newX)
+      //if boat passes vacancy checker of new position, and if it's within sea range... then add it to the sea and boats arrays
+      this.withinSeaRange(newY, newX, newOrientation, length) &&
+      this.vacancyChecker(newY, newX, newOrientation, length)
     ) {
       //replace empty placeholder string in array with this new boat
       this._boats[targetedBoatIndex] = new Ship(length, type);
@@ -212,15 +191,15 @@ export class Gameboard {
       let counter = 0;
       while (counter < length) {
         if (newOrientation === "up") {
-          this._sea[newY + counter][newX] = targetedBoatValue;
-        } else if (newOrientation === "down") {
           this._sea[newY - counter][newX] = targetedBoatValue;
+        } else if (newOrientation === "down") {
+          this._sea[newY + counter][newX] = targetedBoatValue;
         } else if (newOrientation === "left") {
           this._sea[newY][newX - counter] = targetedBoatValue;
         } else if (newOrientation === "right") {
           this._sea[newY][newX + counter] = targetedBoatValue;
-          counter++;
         }
+        counter++;
       }
     } else {
       //boat cant be placed at new position
@@ -228,9 +207,6 @@ export class Gameboard {
       this._boats = structuredClone(oldBoats);
       //revert sea
       this._sea = oldSea.slice();
-
-      //some kind of error or return here
-      return false;
     }
   }
 
