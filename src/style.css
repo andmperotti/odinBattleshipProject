@@ -285,3 +285,87 @@ body{
 .final-turn-count {
     border: 1ps solid lightgray;
 }
+
+.place-ships-ui {
+    border: 1px solid lightblue;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-sea-placer .placed-ship {
+    background-color: lightgray;
+}
+
+
+
+.ship-place-table {
+    border-collapse: collapse;
+    margin: 1ch 0;
+    border: 1px solid lightgray;
+}
+.ship-place-table th {
+    border: 1px solid black;
+    padding: 0 .5ch;
+}
+.table-input {
+    width: 5ch;
+}
+
+#randomly-place-ships-button, 
+#placement-buttons-container {
+    margin: 1ch 0;
+}
+
+td {
+    border-bottom: 1px solid gray;
+    text-align: center;
+}
+
+.verifyModal {
+  background-color: white;
+  border: 1px solid red;
+  position: fixed;
+  top: 25vh;
+  padding: 5%;
+}
+
+.carrier-row,
+.user-sea-placer .carrier-spot {
+    background-color: yellow;
+}
+
+.battleship-row,
+.user-sea-placer .battleship-spot {
+    background-color: lightblue ;
+}
+
+.destroyer-row,
+.user-sea-placer .destroyer-spot  {
+    background-color: lightgreen;
+}
+
+.submarine-row, 
+.user-sea-placer .submarine-spot {
+    background-color: lightcoral;
+}
+
+.patrol-boat-row, 
+.user-sea-placer .patrol-boat-spot {
+    background-color: lightsalmon;
+}
+
+.boat-length-error {
+    color: red;
+}
+
+.player-name{
+    font-weight: bold;
+}
+
+
+.ship-input-error{
+    color: red;
+    width: 80%;
+    text-align: center;
+}
